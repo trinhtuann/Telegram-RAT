@@ -42,14 +42,10 @@
 
 # Скриншоты
 <p align="center">
-    <img src="https://i.imgur.com/Mn4ex9a.jpg" Telegram-RAT">
-    <img src="https://i.imgur.com/XUpGoqf.jpg" Telegram-RAT">
-    <img src="https://i.imgur.com/1OWAcLR.jpg" Telegram-RAT">
+    <img src="https://i.imgur.com/CzJ3u2t.png" Telegram-RAT">
 </p>
 
 # Кнопки навигации
 <p align="center">
-    <img src="https://i.imgur.com/hjGyPSi.jpg" Telegram-RAT">
-    <img src="https://i.imgur.com/ABa1inI.jpg" Telegram-RAT">
-    <img src="https://i.imgur.com/jIOsM6n.jpg" Telegram-RAT">
+    <img src="https://i.imgur.com/LMsVw3L.png" Telegram-RAT">
 </p>
