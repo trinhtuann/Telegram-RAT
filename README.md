@@ -4,10 +4,12 @@
 # :page_facing_up: Установка:
 Для работоспособности скрипта установите Python 3.8 и следующие библиотеки
 * `pip3 install pytelegrambotapi`
-* `pip3 install python-opencv`
+* `pip3 install opencv-python`
 * `pip3 install pypiwin32`
-* `pip3 install pyaudio`
+* `pip3 install comtypes`
+* `pip3 install pyaudio` (Если ошибка скачайте отсюда = https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio)
 * `pip3 install pillow`
+* `pip3 install pycaw`
 
 # :rose: Функции:
 * Обнаружение антвирусного ПО
