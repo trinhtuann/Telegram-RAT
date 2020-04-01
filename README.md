@@ -7,9 +7,10 @@
 * `pip3 install opencv-python`
 * `pip3 install pypiwin32`
 * `pip3 install comtypes`
-* `pip3 install pyaudio` (Если ошибка скачайте отсюда = https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio)
+* `pip3 install pyaudio`
 * `pip3 install pillow`
 * `pip3 install pycaw`
+Если есть ошибка с pyaudio, скачайте отсюда = https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio
 
 # :rose: Функции:
 * Обнаружение антвирусного ПО
