@@ -5,8 +5,9 @@
 Для работоспособности скрипта установите Python 3.8 и следующие библиотеки
 * `pip3 install pytelegrambotapi`
 * `pip3 install opencv-python`
-* `pip3 install pypiwin32`
+* `pip3 install cryptography`
 * `pip3 install comtypes`
+* `pip3 install pywin32`
 * `pip3 install pyaudio`
 * `pip3 install pillow`
 * `pip3 install pycaw`
