@@ -1,7 +1,4 @@
-<p align="center">
-  ## :snake: Telegram-RAT
-  Управляйте компьютером с помощью телеграмма!
-</p>
+<h1 align="center">:snake: Telegram-RAT</h1>
 
 
 # :page_facing_up: Установка:
