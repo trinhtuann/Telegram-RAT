@@ -22,7 +22,7 @@
  <img src="https://i.imgur.com/1T56OZL.png">
 * Теперь нажмите CTRL + S, чтобы сохранить изменения.                                                      
 * Чтобы скомпилировать скрипт, воспользуйтесь pyinstaller'ом (`pip install pyinstaller`)
-  * Теперь откройте CMD в директории со скриптом и впишите `pyinstaller --onefile --noconsole RAT.py` и подождите.
+  * Теперь откройте C2MD в директории со скриптом и впишите `pyinstaller --onefile --noconsole RAT.py` и подождите.
   * Скомпилированный `.exe` файл будет в находиться в папке «dist». И при запуске будет отправлять вам подобное сообщение.
  <img src="https://i.imgur.com/CuRuUjn.png">
 
