@@ -13,6 +13,30 @@
 * `pip3 install pycaw`
 
 * Если есть ошибка с pyaudio, скачайте отсюда = https://clck.ru/Mp82v
+  * Перейдите в директорию с whl-файлом и впишите в консоль `pip3 install pyaudio.x.x.x.whl`
+
+* Создаём бота в телеграме у @BotFather, после чего находим его API
+<p align="center">
+    <img src="https://i.imgur.com/3eWSJtZ.png" Telegram-RAT">
+</p>
+
+* Теперь вам нужно получить Telegram-ID. Для этого перейдите к @my_id_bot и сохраните ваш идентификатор.
+<p align="center">
+    <img src="https://i.imgur.com/TIoauMO.png" Telegram-RAT">
+</p>
+
+* Теперь впишите скопированный токен и айди в скрипт Telegram-RAT.
+<p align="center">
+    <img src="https://i.imgur.com/1T56OZL.png" Telegram-RAT">
+</p>
+* Теперь нажмите CTRL + S, чтобы сохранить изменения.
+                                                            
+* Чтобы скомпилировать скрипт, воспользуйтесь pyinstaller'ом (`pip install pyinstaller`)
+  * Теперь откройте CMD в директории со скриптом и впишите `pyinstaller --onefile --noconsole RAT.py` и подождите.
+  * Скомпилированный `.exe` файл будет в находиться в папке «dist». И при запуске будет отправлять вам подобное сообщение.
+<p align="center">
+    <img src="https://i.imgur.com/CuRuUjn.png" Telegram-RAT">
+</p>
 
 # :rose: Функции:
 * АнтиБот (ВТ)
