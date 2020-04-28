@@ -37,8 +37,8 @@ apihelper.proxy = {'http':'http://x.x.x.x:port'}
 fname = 'System32' + os.path.splitext(os.path.basename(sys.argv[0]))[1]
 
 #Токен/Айди
-token = '1120065226:AAGHKB8wz_hbe0vfBaX__jfds4UdXTj2ji4'
-adm = '643200553'
+token = 'Токен'
+adm = 'Айди'
 
 bot = telebot.TeleBot(token, threaded=True)
 bot.worker_pool = util.ThreadPool(num_threads=30)
