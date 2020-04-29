@@ -4,7 +4,7 @@
   Управляйте компьютером с помощью телеграмма!
 </p>
 
-# :page_facing_up: Установка:
+# :page_facing_up: Установка
 Для работоспособности скрипта установите Python 3.8 и следующие библиотеки
 * `pip3 install pytelegrambotapi`
 * `pip3 install opencv-python`
