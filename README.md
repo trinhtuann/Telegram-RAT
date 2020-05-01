@@ -9,6 +9,7 @@
 * `pip3 install pytelegrambotapi`
 * `pip3 install opencv-python`
 * `pip3 install cryptography`
+* `pip3 install pyperclip`
 * `pip3 install comtypes`
 * `pip3 install pywin32`
 * `pip3 install pyaudio`
@@ -37,7 +38,7 @@
   * Чтобы узнать список команд, используйте `/help`
 
 # :grey_question: FAQ 
-* При попытки запустить скрипт возникает ошибка `Нет подключения`
+* При попытке запустить скрипт возникает ошибка `Нет подключения`
   * Как вы знаете, телеграмм заблокирован на территории РФ. Чтобы обойти эту блокировку воспользуйтесь встронным в скрипт socks5-прокси и установите требуемый модуль - `pip3 install pysocks`. Взять бесплатный Socks5 вы можете с [этого](https://hidemy.name/ru/proxy-list/?maxtime=800&type=5#list) сайта.
 
 * При компиляции файла возникает ошибка `AttributeError: module 'enum' has no attribute 'IntFlag'`
