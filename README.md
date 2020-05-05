@@ -93,7 +93,7 @@
 
 # Скриншоты
 <p align="center">
-    <img src="https://i.imgur.com/CzJ3u2t.png" Telegram-RAT">
+    <img src="https://i.imgur.com/X80LLef.png" Telegram-RAT">
 </p>
 
 # Кнопки навигации
