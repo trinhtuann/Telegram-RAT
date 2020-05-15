@@ -14,7 +14,6 @@
 * `pip3 install pywin32`
 * `pip3 install pyaudio`
 * `pip3 install pillow`
-* `pip3 install pycaw`
 
 * Если есть ошибка с pyaudio, скачайте [отсюда](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio)
   * Перейдите в директорию с whl-файлом и впишите в консоль `pip3 install pyaudio.x.x.x.whl`
