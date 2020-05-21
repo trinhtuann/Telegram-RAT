@@ -309,7 +309,7 @@ if ProcessBSODProtectionEnabled is True:
   SetProtection()
 
 if ProcessBSODProtectionEnabled is True:
- Argument = none.stop = True
+ Argument = none_stop = True
  AdminChecker()
 else:
  Argument = ''
