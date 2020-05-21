@@ -31,8 +31,8 @@ from os import system
 
 
 #Токен/Айди
-TelegramToken = '1187706817:AAEvWdVXLskdp5Ys35yU_KJx7j8erhb2BVI'
-TelegramChatID = '643200553'
+TelegramToken = 'TOKEN'
+TelegramChatID = 'ID'
 
 #Прокси
 Proxy = False
