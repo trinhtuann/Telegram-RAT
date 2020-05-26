@@ -16,13 +16,13 @@ AdminRightsRequired = False
 
 
 # Disable Task Manager on first start
-DisableTaskManager = True
+DisableTaskManager = False
 # Disable Registry Editor on first start
-DisableRegistryTools = True
+DisableRegistryTools = False
 
 
 # Add to startup at first start
-AutorunEnabled = True
+AutorunEnabled = False
 # Installation directory
 InstallPath = 'C:\\ProgramData'
 # Task Name in Task Scheduler
@@ -42,7 +42,7 @@ Message = 'Message'
 # Process protection from termination and deletion
 ProcessBSODProtectionEnabled = False
 # Scan for blocked processes
-MakeBSODWhenProcessStarted = True
+MakeBSODWhenProcessStarted = False
 # Process List (BSoD if running)
 BlacklistedProcesses = (
     'taskmgr.exe',
