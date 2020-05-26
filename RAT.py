@@ -3,7 +3,7 @@ from API import *
 
 # Token/ID
 TelegramToken = 'TOKEN'
-TelegramChatID = '643200553'
+TelegramChatID = 'ID'
 
 # Proxy
 Proxy = False
