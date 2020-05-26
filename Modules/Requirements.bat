@@ -1,5 +1,6 @@
 echo off
 
+
 pip3 install PyAudio-0.2.11-cp38-cp38-win_amd64.whl
 pip3 install PyAudio-0.2.11-cp38-cp38-win32.whl
 
@@ -17,6 +18,7 @@ pip3 install pyinstaller
 
 pip3 install pysocks
 pip3 uninstall -y enum34
+
 
 :cmd
 pause null 
