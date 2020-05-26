@@ -10,11 +10,11 @@
 
 #
 
-* Create a bot in a telegram via [@BotFather](t.me/BotFather), after which find its API Token
+* Create a bot in a telegram via [@BotFather](https://t.me/BotFather), after which find its API Token
 
   <img src="https://i.imgur.com/3eWSJtZ.png">
 
-* Now you need to get your Telegram-ID. To do this, go to [@my_id_bot](t.me/my_id_bot) and save your identifier.
+* Now you need to get your Telegram-ID. To do this, go to [@my_id_bot](https://t.me/my_id_bot) and save your identifier.
 
   <img src="https://i.imgur.com/TIoauMO.png">
 
@@ -53,7 +53,7 @@
   * Process Kill
      * Kill all Processes
      * Disable Task Manager
-* Send MessageBox
+* Send Message
 * Speak Message
 * Open URL
 * Set wallpapers
@@ -62,7 +62,7 @@
 * Get Cookies
 * Get History
 * Clipboard editing
-* BlockInput
+* Block Input
 * Remote Shell
 
 # Screenshots
