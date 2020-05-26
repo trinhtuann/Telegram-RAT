@@ -1,101 +1,76 @@
 <h1 align="center">:snake: Telegram-RAT</h1>
 
 <p align="center">
-  Управляйте компьютером с помощью телеграмма!
+  Control computer via Telegram!
 </p>
 
-# :page_facing_up: Установка
-Для работоспособности скрипта установите Python 3.8 и следующие библиотеки
-* `pip3 install pytelegrambotapi`
-* `pip3 install opencv-python`
-* `pip3 install cryptography`
-* `pip3 install pyperclip`
-* `pip3 install pywin32`
-* `pip3 install pyaudio`
-* `pip3 install pillow`
+# :page_facing_up: Installation guide
+* For the script to work, install Python and download files from the repository
+  * Go to the `Modules` directory and run `Requirements.bat` to install the necessary modules
 
-* Если есть ошибка с pyaudio, скачайте [отсюда](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio)
-  * Перейдите в директорию с whl-файлом и пропишите в консоле `pip3 install pyaudio.x.x.x.whl`
 #
-* Создаём бота в телеграме через `@BotFather`, после чего находим его API-Токен
+
+* Create a bot in a telegram via [@BotFather](t.me/BotFather), after which find its API Token
 
   <img src="https://i.imgur.com/3eWSJtZ.png">
 
-* Теперь вам нужно получить ваш Telegram-ID. Для этого перейдите к `@my_id_bot` и сохраните ваш идентификатор.
+* Now you need to get your Telegram-ID. To do this, go to [@my_id_bot](t.me/my_id_bot) and save your identifier.
 
   <img src="https://i.imgur.com/TIoauMO.png">
 
-* Теперь вставьте скопированный токен и айди в скрипт `RAT.py`
+* Now open the file `RAT.py` and insert your token from the bot and your identifier that you received earlier.
 
-  <img src="https://i.imgur.com/1T56OZL.png">
+  <img src="https://i.imgur.com/ZaMLZ2F.png">
 
-* Нажмите `CTRL + S`, чтобы сохранить изменения.                                                      
-* Чтобы скомпилировать скрипт, воспользуйтесь pyinstaller'ом (`pip install pyinstaller`)
-  * Откройте `CMD` в директории со скриптом и впишите `pyinstaller --onefile --noconsole RAT.py` и подождите.
-  * Скомпилированный `.exe` файл будет в находиться в папке `dist`. И при запуске будет отправлять вам сообщение об онлайне.
-  * Чтобы узнать список команд, используйте `/help`
+* Press `CTRL + S` to save the changes.                                                
+* To compile a script, use `Compile.bat`
+  * The compiled `.exe` file will be in the `dist` folder. And at startup it will send you a message about online.
+  * To get a list of commands, use `/help`
 
-# :grey_question: FAQ 
-* При попытке запустить скрипт возникает ошибка `Нет подключения`
-  * Как вы знаете, телеграмм заблокирован на территории РФ. Чтобы обойти эту блокировку воспользуйтесь встронным в скрипт socks5-прокси и установите требуемый модуль - `pip3 install pysocks`. Взять бесплатный Socks5 вы можете с [этого](https://hidemy.name/ru/proxy-list/?maxtime=800&type=5#list) сайта.
+# :rose: Functions
+* Desktop Capture
+* Webcam Capture
+* Sound Capture
+* Computer Power
+   * Shutdown
+   * Restart
+   * Logoff
+   * BSoD
+* Startup Management
+   * Add to Autorun
+   * Uninstall
+* Files Manager
+   * Current Directory
+   * List of Files
+   * Remove a File
+      * Remove all Files
+   * Upload File
+   * Download File
+   * Run File
+      * Run File as Administrator
+* Process Manager
+  * Process list
+  * Process Kill
+     * Kill all Processes
+     * Disable Task Manager
+* Send MessageBox
+* Speak Message
+* Open URL
+* Set wallpapers
+* ForkBomb
+* Get Passwords
+* Get Cookies
+* Get History
+* Clipboard editing
+* BlockInput
+* Remote Shell
 
-* При компиляции файла возникает ошибка `AttributeError: module 'enum' has no attribute 'IntFlag'`
-  * Чтобы её решить, просто пропишите в консоле `pip uninstall -y enum34` и подтвердите удаление.
-  
-* Работает ли скрипт на системе `Linux`
-  * Возможно и работает, но сама программа расчитана полностью на `Windows`. Из-за этого вам возможно придется установить дополнительные модули для работы на `Linux`. (Замечены ошибки с модулями `PyAudio` и `PyWin32`)
-
-* Могу ли я настроить скрипт под свои задачи
-  * Да, в одном из последних обновлений была добавлена возможность настройки скрипта, просто укажите возле функции `True` либо `False` чтобы получить требуемый результат.
-
-# :rose: Функции
-* Вывод установленного антивируса
-* Вывод текущей версии OS
-* Вывод IP компьютера
-* Скриншот экрана
-* Фото с вебки
-* Видео с вебки
-* Запись микрофона
-* Управление питанием
-   * Выключить
-   * Перезагрузить
-   * Выйти из системы
-   * Синий экран смерти
-* Автозагрузка
-   * Сохранить
-   * Удалить
-* Файловый менеджер
-   * Текущая директория
-   * Список файлов
-   * Удалить файл
-      * Удаление всех файлов
-   * Загрузить файл
-   * Скачать файл
-   * Запустить файл
-      * Запустить от им. админа
-* Диспетчер задач
-  * Список процессов
-  * Остановить процесс
-     * Остановить все процессы
-     * Отключить диспетчер задач
-* Отправить сообщение
-* Озвучить сообщение
-* Открыть ссылку
-* Установить обои
-* Форкбомба
-* Стиллер паролей
-* Буфер обмена
-  * Просмотр буфера обмена
-  * Редактирование буфера обмена
-* Блокировка ввода
-* Выполнить команду
-
-# Скриншоты
+# Screenshots
 <p align="center">
     <img src="https://i.imgur.com/y3Pzz5B.png" Telegram-RAT">
 </p>
 
-# Кнопки навигации
+# Navigation buttons
 <p align="center">
     <img src="https://i.imgur.com/LMsVw3L.png" Telegram-RAT">
 </p>
