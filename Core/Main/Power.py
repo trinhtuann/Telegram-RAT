@@ -3,6 +3,11 @@ from ctypes import *
 from ctypes.wintypes import *
 
 
+# Puts the computer to sleep 
+
+def Hibernate():
+ subprocess.Popen('shutdown -h /f')
+
 # Turns off the computer
 
 def Shutdown():
