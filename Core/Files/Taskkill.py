@@ -1,3 +1,4 @@
+import os
 import subprocess
 from ctypes import *
 
@@ -23,7 +24,7 @@ def WindowTitle():
 
 # Stops all processes
 
-def TaskkillAll(Temp):
+def TaskkillAll(CurrentName, Temp):
  with open(os.path.join(Temp, 'taskkill.bat'), 'w') as OPATH:
    OPATH.writelines([
      'if "%~1"=="" (set "x=%~f0"& start "" /min "%comspec%" /v/c "!x!" any_word & exit /b)\n', 
