@@ -1,4 +1,5 @@
-import ctypes
+import time
+from ctypes import windll
 
 
 # Blocks mouse and keyboard movements
