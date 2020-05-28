@@ -32,6 +32,7 @@
 * Webcam Capture
 * Sound Capture
 * Computer Power
+   * Hibernate
    * Shutdown
    * Restart
    * Logoff
