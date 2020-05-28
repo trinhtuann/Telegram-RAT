@@ -1,4 +1,5 @@
 import cv2
+import time
 
 
 # Takes a photo from a webcam
@@ -30,4 +31,3 @@ def VideoRecorder(Seconds, File):
  cap.release()
  out.release()
  cv2.destroyAllWindows()
- 
