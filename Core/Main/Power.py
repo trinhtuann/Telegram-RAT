@@ -25,7 +25,7 @@ def Logoff():
  subprocess.Popen('shutdown -l /f')
 
 
-# Blue screen of death
+# Blue Screen of Death
 
 def BSoD():
  ctypes.windll.ntdll.RtlAdjustPrivilege(19, 1, 0, byref(c_bool()))
