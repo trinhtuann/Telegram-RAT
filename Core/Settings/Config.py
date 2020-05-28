@@ -62,7 +62,7 @@ def AddToAutorun(AutorunName, InstallPath, ProcessName, CurrentPath, Temp):
 
 # MessageBox Output
 
-def MessageBox(Message):
+def MessageBox(MessageTitle, Message):
  ctypes.windll.user32.MessageBoxW(0, Message, u''+MessageTitle, 0x10)
 
 
