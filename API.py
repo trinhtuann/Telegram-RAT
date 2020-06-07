@@ -2,8 +2,8 @@
 
 ^ Author    : Bainky
 ^ Name      : Telegram-RAT
-^ Github    : https:github.com/bainki
-^ Telegram  : t.me/Bainky
+^ Github    : https:github.com/Bainky
+^ Telegram  : t.me/bainki
 
 > This program is distributed for educational purposes only.
 > Any unauthorized use of this tool without explicit permission is illegal. ;)
