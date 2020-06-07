@@ -1123,6 +1123,7 @@ def CMD(command):
 
 @bot.message_handler(regexp='/Info')
 def Info(command):
+ try:
   bot.send_chat_action(command.chat.id, 'typing')
   bot.send_message(command.chat.id, 
   '*Script Settings*'
@@ -1180,6 +1181,8 @@ def Info(command):
   '\n*Country* » `'+Location('country')+'`'+
   '\n*City* » `'+Location('city')+'`',
    parse_mode="Markdown")
+except:
+ pass
 
 
 # Command handler / help
