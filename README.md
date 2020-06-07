@@ -28,6 +28,7 @@
   * To get a list of commands, use `/help`
 
 # :rose: Functions
+* System Information
 * Desktop Capture
 * Webcam Capture
 * Sound Capture
@@ -57,12 +58,15 @@
 * Send Message
 * Speak Message
 * Open URL
-* Set wallpapers
+* Set Wallpapers
 * ForkBomb
 * Get Passwords
 * Get Cookies
 * Get History
-* Clipboard editing
+* Telegram Session
+* Clipboard Editing
+* Monitor Control
+* Display Rotate
 * Block Input
 * Remote Shell
 
