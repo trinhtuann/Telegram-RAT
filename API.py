@@ -1181,8 +1181,8 @@ def Info(command):
   '\n*Country* » `'+Location('country')+'`'+
   '\n*City* » `'+Location('city')+'`',
    parse_mode="Markdown")
-except:
- pass
+ except:
+  pass
 
 
 # Command handler / help
