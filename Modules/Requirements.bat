@@ -12,6 +12,7 @@ pip3 install pycryptodome
 pip3 install pyperclip
 pip3 install pywin32
 pip3 install pillow
+pip3 install wmi
 
 pip3 install pyinstaller
 
