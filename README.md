@@ -72,10 +72,10 @@
 
 # Screenshots
 <p align="center">
-    <img src="https://i.imgur.com/y3Pzz5B.png" Telegram-RAT">
+    <img src="https://i.imgur.com/BXN7Dff.png" Telegram-RAT">
 </p>
 
 # Navigation buttons
 <p align="center">
-    <img src="https://i.imgur.com/LMsVw3L.png" Telegram-RAT">
+    <img src="https://i.imgur.com/CmehJlP.png" Telegram-RAT">
 </p>
