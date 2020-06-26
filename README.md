@@ -28,7 +28,9 @@
   * To get a list of commands, use `/help`
 
 # :rose: Functions
+* Location by BSSID
 * System Information
+
 * Desktop Capture
 * Webcam Capture
 * Sound Capture
@@ -41,6 +43,7 @@
 * Startup Management
    * Add to Autorun
    * Uninstall
+
 * Files Manager
    * Current Directory
    * List of Files
@@ -55,15 +58,21 @@
   * Process Kill
      * Kill all Processes
      * Disable Task Manager
+
 * Send Message
 * Speak Message
 * Open URL
 * Set Wallpapers
 * ForkBomb
+
+* Discord Token
+* Telegram Session
+* Get CreditCards
+* Get Bookmarks
 * Get Passwords
 * Get Cookies
 * Get History
-* Telegram Session
+
 * Clipboard Editing
 * Monitor Control
 * Display Rotate
