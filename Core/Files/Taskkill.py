@@ -21,8 +21,6 @@ def WindowTitle():
  windll.user32.GetWindowTextW(hWnd, buf, length + 1)
  if buf.value:
   return buf.value
- else:
-  return None
 
 
 # Stops all processes
