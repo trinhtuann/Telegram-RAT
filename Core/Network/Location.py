@@ -3,7 +3,7 @@
 import re
 from json import loads
 from urllib.request import urlopen
-from subprocess import check_output, DEVNULL
+from subprocess import check_output, DEVNULL, STDOUT
 
 
 # MAC address regex
