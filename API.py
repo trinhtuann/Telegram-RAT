@@ -469,7 +469,7 @@ def CD(command):
 
 		bot.send_message(command.chat.id, '_Directory Changed!_\n\n`' + os.getcwd() + '`', parse_mode='Markdown')
 	except FileNotFoundError:
-		bot.reply_to(command, '_Directory not found!.', parse_mode='Markdown')
+		bot.reply_to(command, '_Directory not found!._', parse_mode='Markdown')
 	except:
 		bot.send_message(command.chat.id, '_Current Directory_\n\n`' + os.getcwd() + '`\n\n_Username_\n\n`' + os.getlogin() + '`', parse_mode='Markdown')
 
