@@ -13,7 +13,7 @@ pip3 install pywin32
 pip3 install pynput
 pip3 install mss
 
-pip3 install https://github.com/pyinstaller/pyinstaller/archive/develop.zip
+pip3 install pyinstaller
 
 :cmd
 pause null
