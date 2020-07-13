@@ -21,7 +21,7 @@ ProcessBSODProtectionEnabled = False
 # Add to startup at first start
 AutorunEnabled = False
 # Installation directory
-InstallPath = 'C:\\Windows\\Temp\\'
+InstallPath = 'C:\\ProgramData\\'
 # Task name in Task Scheduler
 AutorunName = 'OneDrive Update'
 # The name of the process in the Task Manager
