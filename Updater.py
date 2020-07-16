@@ -25,7 +25,6 @@ for CurrentVersion in Version:
 		print('\nChangelogs:\n' + RAT_Changelogs)
 		q = input()
 		if q.lower() == 'y'.lower():
-
 			for Downloading in '\nDownloading update..':
 				time.sleep(0.05)
 				sys.stdout.write(Downloading)
@@ -37,7 +36,6 @@ for CurrentVersion in Version:
 				sys.stdout.write(Unpacking)
 				sys.stdout.flush()
 			shutil.unpack_archive(RAT_Path, 'Telegram-RAT')
-
 			time.sleep(3)
 			print('\nUpdate installed.')
 			os.remove(RAT_Path)
