@@ -22,9 +22,8 @@ for CurrentVersion in Version:
 		input()
 	else:
 		print('Update available. Update now? y/n')
-		print('\nChangelogs:\n' + RAT_Changelogs)
-		q = input()
-		if q.lower() == 'y'.lower():
+		print('\nChangelogs:\n' + RAT_Changelogs + '\n')
+		if input().lower() == 'y'.lower():
 			for Downloading in '\nDownloading update..':
 				time.sleep(0.05)
 				sys.stdout.write(Downloading)
