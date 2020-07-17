@@ -1,7 +1,6 @@
 # Import modules
 
 import os
-import sys
 import time
 import shutil
 import urllib.request
