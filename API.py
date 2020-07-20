@@ -541,7 +541,7 @@ def Remove(command):
 
 			File = re.split('/Remove ', command.text, flags=re.I)[1]
 			Created = os.path.getctime(os.getcwd() + '\\' + File)
-			Year, Month, Day, Hour, Minute, Second=localtime(Created)[:-3]
+			Year, Month, Day, Hour, Minute, Second=time.localtime(Created)[:-3]
 			Folder = os.getcwd() + '\\' + File
 			FolderSize = 0
 
