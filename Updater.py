@@ -14,8 +14,8 @@ RAT_Path = 'Telegram-RAT.zip'
 
 # Checking version Telegram-RAT
 
-if RAT_Version == '2.6':
-	print('No available updates')
+if RAT_Version == '2.7':
+	print('No available updates.')
 	input()
 else:
 	if os.path.exists('Updated Version ' + RAT_Version):
@@ -25,9 +25,9 @@ else:
 		print('Update available. Update now? y/n')
 		print('\nChangelogs:\n' + RAT_Changelogs + '\n')
 		if input().lower() == 'y'.lower():
-			print('\nDownloading update..')
+			print('\nDownloading update...')
 			urllib.request.urlretrieve(RAT_Link, RAT_Path)
-			print('Unpacking archive..')
+			print('Unpacking archive...')
 			shutil.unpack_archive(RAT_Path, 'Updated Version ' + RAT_Version)
 			os.remove(RAT_Path)
 			time.sleep(3)
