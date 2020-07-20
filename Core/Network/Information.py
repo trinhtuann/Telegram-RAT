@@ -1,22 +1,26 @@
 # Import modules
 
-from json import loads
-from urllib.request import urlopen
-from datetime import datetime, date
-from platform import system, release, architecture
-from subprocess import check_output, DEVNULL, STDOUT
+import json
+import datetime
+import platform
+import subprocess
+import urllib.request
 
 
 # Windows Version
 
 def Windows():
-	return system() + ' ' + release()
+	System = platform.system()
+	Release = platform.release()
+	Version = System + ' ' + Release
+	return Version
 
 
 # System Information
 
 def Computer(Win32, Value):
-	a = check_output('wmic ' + Win32 + ' get ' + Value, shell=True, stderr=DEVNULL, stdin=DEVNULL)
+	a = subprocess.check_output('wmic ' + Win32 + ' get ' + Value,
+		shell=True, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
 	b = a.decode('utf-8')
 	c = b.split('\n')
 	return c[1]
@@ -26,13 +30,15 @@ def Computer(Win32, Value):
 
 def RAM():
 	Size = Computer('ComputerSystem', 'TotalPhysicalMemory')
-	return int(Size) / 1024 / 1024 / 1024
+	intSize = int(Size) / 1024 / 1024 / 1024
+	return intSize
 
 
 # Getting the set computer time
 
 def SystemTime():
-	SystemTime = str(datetime.today().hour) + ':'+str(datetime.today().minute) + ':' + str(datetime.today().second)
+	Today = datetime.datetime.today()
+	SystemTime = str(Today.hour) + ':'+str(Today.minute) + ':' + str(Today.second)
 	return SystemTime
 
 
@@ -40,9 +46,9 @@ def SystemTime():
 
 def Geolocation(Value, Ip=''):
 	try:
-		result = urlopen(f'http://ip-api.com/json/{Ip}').read().decode('utf-8')
+		Result = urllib.request.urlopen(f'http://ip-api.com/json/{Ip}').read().decode('utf-8')
 	except:
 		return None
 	else:
-		result = loads(result)
-		return result[Value]
+		Result = json.loads(Result)
+		return Result[Value]

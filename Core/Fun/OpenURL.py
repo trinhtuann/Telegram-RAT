@@ -1,6 +1,6 @@
 # Import modules
 
-from subprocess import call
+import subprocess
 
 
 # Opens a browser link
@@ -8,4 +8,4 @@ from subprocess import call
 def OpenBrowser(URL):
 	if not URL.startswith('http'):
 		URL = 'http://' + URL
-	call('start ' + URL, shell=True)
+	subprocess.check_output('start ' + URL, shell=True)

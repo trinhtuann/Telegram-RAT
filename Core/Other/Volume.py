@@ -1,11 +1,11 @@
 # Import modules
 
-from win32api import keybd_event
-from win32con import VK_VOLUME_UP
+import win32api
+import win32con
 
 
 # Audio volume control
 
 def VolumeControl(Level):
 	for i in range(int(Level)):
-		keybd_event(VK_VOLUME_UP, 0)
+		win32api.keybd_event(win32con.VK_VOLUME_UP, 0)

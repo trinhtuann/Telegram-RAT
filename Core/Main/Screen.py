@@ -1,7 +1,7 @@
 # Import modules
 
 try:
-	from mss import mss
+	import mss
 except ImportError:
 	raise SystemExit('Please run › pip install mss')
 
@@ -9,5 +9,5 @@ except ImportError:
 # Takes a screenshot
 
 def Screenshot(File):
-	with mss() as sct:
+	with mss.mss() as sct:
 		sct.shot(output=File)

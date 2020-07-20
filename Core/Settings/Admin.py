@@ -1,9 +1,9 @@
 # Import modules
 
-from ctypes import windll
+import ctypes
 
 
 # Is user administrator
 
 def Admin():
-	return windll.shell32.IsUserAnAdmin() != 0
+	return ctypes.windll.shell32.IsUserAnAdmin() != 0

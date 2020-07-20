@@ -18,4 +18,5 @@ Antiviruses = {
 	'C:\\Program Files (x86)\\360\\Total Security': '360 Total Security'
 	}
 
+
 Antivirus = [Antiviruses[d] for d in filter(os.path.exists, Antiviruses)]

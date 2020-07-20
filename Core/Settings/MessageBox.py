@@ -1,9 +1,9 @@
 # Import modules
 
-from ctypes import windll
+import ctypes
 
 
 # MessageBox Output
 
 def MessageBox(Message):
-	windll.user32.MessageBoxW(0, Message, u'', 0x10)
+	ctypes.windll.user32.MessageBoxW(0, Message, u'', 0x10)

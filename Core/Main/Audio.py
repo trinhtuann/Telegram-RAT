@@ -2,7 +2,7 @@
 
 try:
 	import wave
-	from pyaudio import PyAudio, paInt16
+	import pyaudio
 except ImportError:
 	raise SystemExit('Please run › pip install pyaudio')
 
@@ -11,12 +11,12 @@ except ImportError:
 
 def Microphone(File, Seconds):
 	CHUNK = 1024
-	FORMAT = paInt16
+	FORMAT = pyaudio.paInt16
 	CHANNELS = 2
 	RATE = 44100
 	RECORD_SECONDS = float(Seconds)
 	WAVE_OUTPUT_FILENAME = File
-	p = PyAudio()
+	p = pyaudio.PyAudio()
 	stream = p.open(format=FORMAT,
 					channels=CHANNELS,
 					rate=RATE,

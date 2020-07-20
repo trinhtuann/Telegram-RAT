@@ -1,16 +1,16 @@
 # Import modules
 
-from win32api import EnumDisplayDevices, EnumDisplaySettings, ChangeDisplaySettingsEx
-from win32con import ENUM_CURRENT_SETTINGS, DMDO_DEFAULT, DMDO_90, DMDO_180, DMDO_270
+import win32api
+import win32con
 
 
 # Variables
 
 Rotations = {
-	'0': DMDO_DEFAULT,
-	'90': DMDO_90,
-	'180': DMDO_180,
-	'270': DMDO_270
+	'0': win32con.DMDO_DEFAULT,
+	'90': win32con.DMDO_90,
+	'180': win32con.DMDO_180,
+	'270': win32con.DMDO_270
 }
 
 
@@ -20,10 +20,10 @@ def DisplayRotate(Degrees='0'):
 	try:
 		RotationValue = Rotations[Degrees]
 	except KeyError:
-		RotationValue = DMDO_DEFAULT
-	Device = EnumDisplayDevices(None, 0)
-	dm = EnumDisplaySettings(Device.DeviceName, ENUM_CURRENT_SETTINGS)
+		RotationValue = win32con.DMDO_DEFAULT
+	Device = win32api.EnumDisplayDevices(None, 0)
+	dm = win32api.EnumDisplaySettings(Device.DeviceName, win32con.ENUM_CURRENT_SETTINGS)
 	if (dm.DisplayOrientation + RotationValue) % 2 == 1:
 		dm.PelsWidth, dm.PelsHeight = dm.PelsHeight, dm.PelsWidth   
 	dm.DisplayOrientation = RotationValue
-	ChangeDisplaySettingsEx(Device.DeviceName, dm)
+	win32api.ChangeDisplaySettingsEx(Device.DeviceName, dm)

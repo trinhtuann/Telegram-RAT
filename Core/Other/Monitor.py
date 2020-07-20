@@ -1,11 +1,11 @@
 # Import modules
 
-from ctypes import windll
+import ctypes
 
 
 # Variables
 
-SendMessageA = windll.user32.SendMessageA
+SendMessageA = ctypes.windll.user32.SendMessageA
 HWND = 0xFFFF
 WM_SYSCOMMAND = 0x112
 SC_MONITORPOWER = 0xF170
