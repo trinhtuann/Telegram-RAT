@@ -1,7 +1,9 @@
 # Import modules
 
-import pyttsx3
-
+try:
+	import pyttsx3
+except ImportError:
+	raise SystemExit('Please run › pip install pyttsx3')
 
 # Speaks text
 

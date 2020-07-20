@@ -1,6 +1,9 @@
 # Import modules
 
-from keyboard import write
+try:
+	from keyboard import write
+except ImportError:
+	raise SystemExit('Please run › pip install keyboard')
 
 
 # Prints the specified text
