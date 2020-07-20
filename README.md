@@ -68,8 +68,10 @@
 * Speak Message
 * Open URL
 * Set Wallpapers
-* ForkBomb
 
+### _Bomb_
+* ForkBomb
+* ZipBomb
 
 ### _Stealer_
 * Wi-Fi Data
@@ -86,6 +88,7 @@
 ### _Other_
 * Clipboard Editing
 * Receive Keylogs
+* Send Key Press
 * Monitor Control
 * Volume Control
 * Display Rotate
