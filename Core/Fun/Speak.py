@@ -5,7 +5,7 @@ try:
 except ImportError:
 	raise SystemExit('Please run › pip install pyttsx3')
 
-# Speaks text
+# Speaks text.
 
 def SpeakText(Text):
 	engine = pyttsx3.init()
