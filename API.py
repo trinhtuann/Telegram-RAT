@@ -132,7 +132,6 @@ main8.row(button6, button7)
 
 # Create a folder to save temporary files
 
-Expansion = os.path.splitext(os.path.basename(sys.argv[0]))[1]
 CurrentName = os.path.basename(sys.argv[0])
 CurrentPath = sys.argv[0]
 
