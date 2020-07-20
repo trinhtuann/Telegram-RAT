@@ -8,23 +8,23 @@ import ctypes.wintypes
 # Puts the computer to sleep 
 
 def Hibernate():
-	subprocess.Popen('shutdown -h /f', shell=True)
+	subprocess.call('shutdown -h /f', shell=True)
 
 # Turns off the computer
 
 def Shutdown():
-	subprocess.Popen('shutdown -s /t 0 /f', shell=True)
+	subprocess.call('shutdown -s /t 0 /f', shell=True)
 
 
 # Restarts computer
 
 def Restart():
-	subprocess.Popen('shutdown -r /t 0 /f', shell=True)
+	subprocess.call('shutdown -r /t 0 /f', shell=True)
 
 # Ends user session
 
 def Logoff():
-	subprocess.Popen('shutdown -l /f', shell=True)
+	subprocess.call('shutdown -l /f', shell=True)
 
 
 # Blue screen of death

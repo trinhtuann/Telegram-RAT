@@ -16,4 +16,4 @@ def WebcamScreenshot(File, Delay=2500, Camera=1):
 		urllib.request.urlretrieve(CommandCamLink, CommandCamPath)
 
 	Command = f'@{CommandCamPath} /filename \"{File}\" /delay {Delay} /devnum {Camera} > NUL'
-	subprocess.check_output(Command, shell=True)
+	subprocess.call(Command, shell=True)

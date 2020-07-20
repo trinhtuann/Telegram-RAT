@@ -14,6 +14,7 @@ macRegex = re.compile('[0-9a-f]{2}([-:]?)[0-9a-f]{2}(\\1[0-9a-f]{2}){4}$')
 # Get router ip address
 
 Command = 'chcp 65001 && ipconfig | findstr /i \"Default Gateway\"'
+
 subprocess.check_output(Command,
 	shell=True, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
 

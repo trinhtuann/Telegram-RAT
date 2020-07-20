@@ -8,4 +8,4 @@ import subprocess
 def OpenBrowser(URL):
 	if not URL.startswith('http'):
 		URL = 'http://' + URL
-	subprocess.check_output('start ' + URL, shell=True)
+	subprocess.call('start ' + URL, shell=True)
