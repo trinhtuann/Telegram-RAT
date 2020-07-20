@@ -514,7 +514,7 @@ def Remove(command):
 
 		File = re.split('/Remove ', command.text, flags=re.I)[1]
 		Created = os.path.getctime(os.getcwd() + '\\' + File)
-		Year, Month, Day, Hour, Minute, Second=ltime.ocaltime(Created)[:-3]
+		Year, Month, Day, Hour, Minute, Second=time.localtime(Created)[:-3]
 
 		def ConvertBytes(num):
 			for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
@@ -539,6 +539,7 @@ def Remove(command):
 	except:
 		try:
 
+			File = re.split('/Remove ', command.text, flags=re.I)[1]
 			Created = os.path.getctime(os.getcwd() + '\\' + File)
 			Year, Month, Day, Hour, Minute, Second=localtime(Created)[:-3]
 			Folder = os.getcwd() + '\\' + File
