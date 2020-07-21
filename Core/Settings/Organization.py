@@ -14,6 +14,7 @@ OrganizationsPaths = (
 	'C:\\Users\\raustin\\Desktop\\zaqrnsnoefaa.xlsx',
 	'C:\\Users\\Administrator\\Desktop\\decoy.cpp',
 	'C:\\Users\\John\\Desktop\\foobar.txt',
+	'C:\\Bank-statement-08-2013.docx',
 	'C:\\Users\\STRAZNICA.GRUBUTT',
 	'C:\\Users\\Jason\\Desktop',
 	'C:\\Users\\Lisa\\Desktop',
