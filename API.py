@@ -1265,9 +1265,9 @@ def Location(command):
 			'\n*Country* » `' + Geolocation('country') + '`' +
 			'\n*City* » `' + Geolocation('city') + '`' +
 			'\n'
-			'\n*Latitude* » `' + Coordinates['lat'] + '`' +
-			'\n*Longitude* » `' + Coordinates['lon'] + '`' +
-			'\n*Range* » `' + Coordinates['range'] + '`' +
+			'\n*Latitude* » `' + str(Coordinates['lat']) + '`' +
+			'\n*Longitude* » `' + str(Coordinates['lon']) + '`' +
+			'\n*Range* » `' + str(Coordinates['range']) + '`' +
 			'\n'
 			'\n*BSSID* » `' + GetMacByIP() + '`',
 				parse_mode='Markdown') 
